@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Block Puzzle</title>
+    <style>
+      * { box-sizing: border-box; }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        background: #f3f6fb;
+      }
+
+      #game-container {
+        width: min(100vw, 960px);
+        min-height: min(100vh, 640px);
+        background: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <main id="game-container" aria-label="Block Puzzle game area"></main>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
+  </body>
+</html>
