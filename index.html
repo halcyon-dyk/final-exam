@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Block Puzzle</title>
+    <title>지하 시설 탈출</title>
     <style>
       * { box-sizing: border-box; }
 
@@ -17,13 +17,29 @@
 
       #game-container {
         width: min(100vw, 960px);
-        min-height: min(100vh, 640px);
+        height: min(100svh, 640px);
         background: #fff;
+      }
+
+      #game-container canvas {
+        display: block;
       }
     </style>
   </head>
   <body>
-    <main id="game-container" aria-label="Block Puzzle game area"></main>
+    <main id="game-container" aria-label="지하 시설 탈출 게임 영역"></main>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
+    <script src="js/state/GameState.js"></script>
+    <script src="js/ui/InvestigationPanel.js"></script>
+    <script src="js/ui/InventoryPanel.js"></script>
+    <script src="js/ui/MemoPanel.js"></script>
+    <script src="js/ui/TimerDisplay.js"></script>
+    <script src="js/ui/HintPanel.js"></script>
+    <script src="js/ui/Feedback.js"></script>
+    <script src="js/rooms/PrisonRoom.js"></script>
+    <script src="js/scenes/StartScene.js"></script>
+    <script src="js/scenes/GameScene.js"></script>
+    <script src="js/scenes/ResultScene.js"></script>
+    <script src="js/main.js"></script>
   </body>
 </html>
