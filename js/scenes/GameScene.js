@@ -5,6 +5,8 @@ class GameScene extends Phaser.Scene {
 
   preload() {
     this.load.image("prisonBackground", "js/images/%EA%B0%90%EA%B8%88%EC%8B%A4.png");
+    this.load.image("maintenanceBackground", "js/images/%EC%A0%95%EB%B9%84%EC%8B%A4-%EC%A0%81%EC%9A%A9.png");
+    this.load.image("controlBackground", "js/images/%ED%86%B5%EC%A0%9C%EC%8B%A4-%EC%A0%81%EC%9A%A9.png");
   }
 
   create() {
@@ -12,18 +14,19 @@ class GameScene extends Phaser.Scene {
     this.state = window.gameState;
     this.layout = new Layout(width, height);
 
-    this.cameras.main.setBackgroundColor("#f3f6fb");
+    const isDarkRoom = ["감금실", "정비실", "통제실"].includes(this.state.currentRoom);
+    this.cameras.main.setBackgroundColor(isDarkRoom ? "#111315" : "#f3f6fb");
     this.add.text(24, 20, this.state.currentRoom, {
-      color: "#1f2937",
+      color: isDarkRoom ? "#d7d2c8" : "#1f2937",
       fontFamily: "sans-serif",
       fontSize: "28px",
     }).setDepth(20);
-    this.previousArrow = this.add.text(24, height - 48, "◀", { color: "#374151", fontSize: "32px" })
+    this.previousArrow = this.add.text(24, height - 48, "◀", { color: isDarkRoom ? "#d7d2c8" : "#374151", fontSize: "32px" })
       .setOrigin(0, 0.5)
       .setDepth(20)
       .setInteractive({ useHandCursor: true });
     this.previousArrow.on("pointerdown", () => this.moveToPreviousRoom());
-    this.nextArrow = this.add.text(width - 24, height - 48, "▶", { color: "#374151", fontSize: "32px" })
+    this.nextArrow = this.add.text(width - 24, height - 48, "▶", { color: isDarkRoom ? "#d7d2c8" : "#374151", fontSize: "32px" })
       .setOrigin(1, 0.5)
       .setDepth(20)
       .setInteractive({ useHandCursor: true });

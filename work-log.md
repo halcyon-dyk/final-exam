@@ -31,3 +31,9 @@
 - 날짜와 시각: 2026-11-18 16:17 / 요청 요약: 시작 화면 PNG 로드 실패 수정 / 수정한 파일: js/scenes/StartScene.js, prompt.txt, work-log.md / 판단 근거: 실제 PNG가 images 하위 폴더에 있어 Phaser 로더 경로를 해당 위치로 수정함
 - 날짜와 시각: 2026-11-18 16:26 / 요청 요약: 감금실 참고 이미지 기반 장면 디자인 적용 / 수정한 파일: js/scenes/GameScene.js, js/rooms/PrisonRoom.js, prompt.txt, work-log.md / 판단 근거: 참고 이미지의 방 내부를 감금실 배경으로 사용하고 주요 사물의 조사 영역을 실제 배치에 맞춤
 - 날짜와 시각: 2026-11-18 16:31 / 요청 요약: 시작 화면·감금실 이미지의 제미나이 마크 제거 / 수정한 파일: js/images/starting page.png, js/images/감금실.png, js/rooms/PrisonRoom.js, prompt.txt, work-log.md / 판단 근거: 각 이미지의 오른쪽 아래 마크만 제거하고 감금실 배경 크롭을 새 이미지 비율에 맞춤
+- 날짜와 시각: 2026-11-18 16:33 / 요청 요약: 드라이버 획득 후 보관함 목록 갱신 수정 / 수정한 파일: js/rooms/PrisonRoom.js, prompt.txt, work-log.md / 판단 근거: 아이템 상태 저장 뒤 열려 있는 보관함을 즉시 다시 렌더링해 획득 결과를 표시함
+- 날짜와 시각: 2026-11-18 16:39 / 요청 요약: 감금실2 이미지 기반 배경 교체 및 제미나이 마크 제거 / 수정한 파일: js/images/감금실.png, js/rooms/PrisonRoom.js, js/scenes/GameScene.js, prompt.txt, work-log.md / 판단 근거: 새 이미지의 방 화면 영역만 무대에 맞춰 크롭하고 감금실 주변 배경을 어둡게 맞춤
+- 날짜와 시각: 2026-11-18 16:43 / 요청 요약: 감금실 배경의 중복 하단 이동 화살표 제거 / 수정한 파일: js/images/감금실.png, prompt.txt, work-log.md / 판단 근거: 이미지 속 좌우 화살표를 제거해 게임이 그리는 화면 가장자리 이동 화살표만 남김
+- 날짜와 시각: 2026-11-18 16:47 / 요청 요약: 정비실 참고 이미지 기반 장면 디자인 적용 / 수정한 파일: js/images/정비실-적용.png, js/scenes/GameScene.js, js/rooms/MaintenanceRoom.js, prompt.txt, work-log.md / 판단 근거: 작업장 부분만 무대 배경으로 사용하고 손전등 본체·배터리·어두운 벽면의 조사 영역을 이미지 위치에 맞춤
+- 날짜와 시각: 2026-11-18 16:54 / 요청 요약: 통제실 참고 이미지 기반 장면 디자인 적용 / 수정한 파일: js/images/통제실-적용.png, js/scenes/GameScene.js, js/rooms/ControlRoom.js, prompt.txt, work-log.md / 판단 근거: 마크·내장 화살표를 제거한 통제실 작업 화면을 배경으로 쓰고 다섯 조사 영역을 실제 사물 위치에 맞춤
+- 날짜와 시각: 2026-11-18 16:57 / 요청 요약: 전선 클릭 후 배선 퍼즐이 열리지 않는 문제 수정 / 수정한 파일: js/rooms/ControlRoom.js, prompt.txt, work-log.md / 판단 근거: 전선 상호작용은 조사 패널 대신 배선 퍼즐만 열도록 분리해 패널 겹침을 제거함

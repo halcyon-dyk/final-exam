@@ -50,8 +50,10 @@ class PrisonRoom {
     const texture = this.scene.textures.get("prisonBackground");
     if (!texture.has("roomView")) {
       const source = texture.getSourceImage();
+      const roomLeft = Math.round(source.width * (78 / 1366));
       const roomTop = Math.round(source.height * (164 / 768));
-      texture.add("roomView", 0, 0, roomTop, source.width, source.height - roomTop);
+      const roomWidth = Math.round(source.width * (840 / 1366));
+      texture.add("roomView", 0, roomLeft, roomTop, roomWidth, source.height - roomTop);
     }
     this.scene.add.image(
       stage.x + stage.width / 2,

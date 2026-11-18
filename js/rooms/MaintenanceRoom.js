@@ -8,15 +8,35 @@ class MaintenanceRoom {
 
   create() {
     const stage = this.scene.layout.stage;
-    this.scene.add.rectangle(stage.x + stage.width / 2, stage.y + stage.height / 2, stage.width, stage.height, 0xb6c2cf);
-    this.createObject(stage.x + stage.width * 0.32, stage.y + stage.height * 0.38, 150, 90, "손전등 본체", "작업대에 놓인 손전등 본체다.", () => this.collectPart("손전등 본체"));
-    this.createObject(stage.x + stage.width * 0.7, stage.y + stage.height * 0.52, 110, 55, "배터리", "공구함 안에 든 배터리다.", () => this.collectPart("배터리"));
-    this.createObject(stage.x + stage.width * 0.48, stage.y + stage.height * 0.66, 180, 70, "어두운 벽면", "빛을 비추면 무언가 드러날 것 같다.", () => this.useFlashlight());
+    this.createBackground(stage);
+    this.createObject(stage.x + stage.width * 0.27, stage.y + stage.height * 0.45, stage.width * 0.23, stage.height * 0.14, "손전등 본체", "작업대에 놓인 손전등 본체다.", () => this.collectPart("손전등 본체"));
+    this.createObject(stage.x + stage.width * 0.84, stage.y + stage.height * 0.55, stage.width * 0.16, stage.height * 0.18, "배터리", "공구함 안에 든 배터리다.", () => this.collectPart("배터리"));
+    this.createObject(stage.x + stage.width * 0.58, stage.y + stage.height * 0.76, stage.width * 0.42, stage.height * 0.28, "어두운 벽면", "빛을 비추면 무언가 드러날 것 같다.", () => this.useFlashlight());
+  }
+
+  createBackground(stage) {
+    const texture = this.scene.textures.get("maintenanceBackground");
+    if (!texture.has("roomView")) {
+      const source = texture.getSourceImage();
+      const roomLeft = Math.round(source.width * (78 / 1366));
+      const roomTop = Math.round(source.height * (164 / 768));
+      const roomWidth = Math.round(source.width * (840 / 1366));
+      texture.add("roomView", 0, roomLeft, roomTop, roomWidth, source.height - roomTop);
+    }
+    this.scene.add.image(
+      stage.x + stage.width / 2,
+      stage.y + stage.height / 2,
+      "maintenanceBackground",
+      "roomView",
+    ).setDisplaySize(stage.width, stage.height);
   }
 
   collectPart(part) {
     if (this.state.hasItem(part)) return;
     this.state.addItem(part);
+    if (this.scene.inventoryPanel.background.visible) {
+      this.scene.inventoryPanel.render();
+    }
   }
 
   useFlashlight() {
@@ -31,8 +51,7 @@ class MaintenanceRoom {
   }
 
   createObject(x, y, width, height, label, message, onInspect) {
-    const object = this.scene.add.rectangle(x, y, width, height, 0x64748b).setInteractive({ useHandCursor: true });
-    this.scene.add.text(x, y, label, { color: "#ffffff", fontFamily: "sans-serif", fontSize: "21px" }).setOrigin(0.5);
+    const object = this.scene.add.rectangle(x, y, width, height, 0xd79a32, 0.01).setInteractive({ useHandCursor: true });
     object.on("pointerdown", () => {
       onInspect?.();
       this.panel.show(label, message);
