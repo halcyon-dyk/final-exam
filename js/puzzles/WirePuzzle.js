@@ -1,50 +1,63 @@
 class WirePuzzle {
   constructor(scene, onSuccess) {
     this.scene = scene;
-    this.expected = ["빨강", "파랑", "노랑"];
-    this.input = [];
     this.onSuccess = onSuccess;
+    this.selectedWire = null;
+    this.connections = {};
     this.elements = [];
     this.create();
   }
 
   create() {
     const { width, height } = this.scene.scale;
-    this.add(this.scene.add.rectangle(width / 2, height / 2, 380, 260, 0xffffff));
-    this.add(this.scene.add.text(width / 2, height / 2 - 90, "배선 연결", { color: "#1f2937", fontFamily: "sans-serif", fontSize: "26px" }).setOrigin(0.5));
-    this.display = this.scene.add.text(width / 2, height / 2 - 45, "순서: ", { color: "#374151", fontFamily: "sans-serif", fontSize: "20px" }).setOrigin(0.5);
+    this.add(this.scene.add.rectangle(width / 2, height / 2, 420, 410, 0xffffff));
+    this.add(this.scene.add.text(width / 2, height / 2 - 165, "배선 연결", { color: "#1f2937", fontFamily: "sans-serif", fontSize: "26px" }).setOrigin(0.5));
+    this.display = this.scene.add.text(width / 2, height / 2 - 115, "A → -\nB → -\nC → -", { align: "center", color: "#374151", fontFamily: "sans-serif", fontSize: "20px", lineSpacing: 8 }).setOrigin(0.5);
     this.add(this.display);
-    this.message = this.scene.add.text(width / 2, height / 2 + 90, "", { color: "#dc2626", fontFamily: "sans-serif", fontSize: "16px" }).setOrigin(0.5);
+    this.message = this.scene.add.text(width / 2, height / 2 + 165, "전선을 선택한 뒤 단자를 선택하세요.", { color: "#374151", fontFamily: "sans-serif", fontSize: "16px" }).setOrigin(0.5);
     this.add(this.message);
-    ["빨강", "파랑", "노랑"].forEach((color, index) => this.createButton(width / 2 - 110 + index * 110, height / 2 + 20, color));
+
+    ["A", "B", "C"].forEach((wire, index) => this.createButton(width / 2 - 100, height / 2 - 35 + index * 45, wire, () => this.selectWire(wire)));
+    ["1", "2", "3"].forEach((terminal, index) => this.createButton(width / 2 + 100, height / 2 - 35 + index * 45, terminal, () => this.connect(terminal)));
+    this.createButton(width / 2 - 60, height / 2 + 105, "닫기", () => this.destroy(), 90);
+    this.createButton(width / 2 + 60, height / 2 + 105, "확인", () => this.check(), 90);
   }
 
-  createButton(x, y, label) {
-    const button = this.scene.add.rectangle(x, y, 90, 48, 0x2563eb).setInteractive({ useHandCursor: true });
+  createButton(x, y, label, onClick, buttonWidth = 56) {
+    const button = this.scene.add.rectangle(x, y, buttonWidth, 38, 0x2563eb).setInteractive({ useHandCursor: true });
     const text = this.scene.add.text(x, y, label, { color: "#ffffff", fontFamily: "sans-serif", fontSize: "18px" }).setOrigin(0.5);
-    button.on("pointerdown", () => this.select(label));
+    button.on("pointerdown", onClick);
     this.add(button);
     this.add(text);
   }
 
-  select(color) {
-    if (color !== this.expected[this.input.length]) {
-      this.input = [];
-      this.message.setText("연결이 끊겼습니다. 처음부터 다시 연결하세요.");
-      this.update();
-      return;
-    }
-
-    this.input.push(color);
-    this.update();
-    if (this.input.length === this.expected.length) {
-      this.destroy();
-      this.onSuccess();
-    }
+  selectWire(wire) {
+    this.selectedWire = wire;
+    this.message.setText(`${wire} 전선을 선택했습니다. 단자를 선택하세요.`);
   }
 
-  update() {
-    this.display.setText(`순서: ${this.input.join(" → ")}`);
+  connect(terminal) {
+    if (!this.selectedWire) {
+      this.message.setText("먼저 전선을 선택하세요.");
+      return;
+    }
+    this.connections[this.selectedWire] = terminal;
+    this.selectedWire = null;
+    this.updateDisplay();
+    this.message.setText("연결을 바꾸려면 전선을 다시 선택하세요.");
+  }
+
+  updateDisplay() {
+    this.display.setText(["A", "B", "C"].map((wire) => `${wire} → ${this.connections[wire] ?? "-"}`).join("\n"));
+  }
+
+  check() {
+    if (this.connections.A === "2" && this.connections.B === "3" && this.connections.C === "1") {
+      this.destroy();
+      this.onSuccess();
+      return;
+    }
+    this.message.setText("연결이 맞지 않습니다. 수정한 뒤 다시 확인하세요.");
   }
 
   add(element) { element.setDepth(200); this.elements.push(element); }

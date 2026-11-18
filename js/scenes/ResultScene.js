@@ -11,9 +11,8 @@ class ResultScene extends Phaser.Scene {
     const { width, height } = this.scale;
     const state = window.gameState;
     const title = this.success ? "탈출 성공" : "탈출 실패";
-    const detail = this.success
-      ? `남은 시간: ${Math.floor(state.timeRemaining / 60)}:${String(state.timeRemaining % 60).padStart(2, "0")}\n힌트 사용: ${state.hintUses}회\n최종 점수: ${Math.max(0, state.timeRemaining - state.hintUses * 30)}`
-      : "시설이 봉쇄되었습니다.";
+    const score = this.success ? Math.max(0, 1000 + state.timeRemaining * 5 - state.hintUses * 100) : 0;
+    const detail = `남은 시간: ${Math.floor(state.timeRemaining / 60)}:${String(state.timeRemaining % 60).padStart(2, "0")}\n힌트 사용: ${state.hintUses}회\n최종 점수: ${score}${this.success ? "" : "\n시설이 봉쇄되었습니다."}`;
 
     this.cameras.main.setBackgroundColor("#f3f6fb");
     this.add.text(width / 2, height * 0.35, title, {
@@ -37,6 +36,7 @@ class ResultScene extends Phaser.Scene {
     }).setOrigin(0.5);
     restart.on("pointerdown", () => {
       state.reset();
+      state.clearSave();
       this.scene.start("GameScene");
     });
   }

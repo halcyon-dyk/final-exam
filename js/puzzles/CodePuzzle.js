@@ -12,7 +12,7 @@ class CodePuzzle {
     const { width, height } = this.scene.scale;
     this.add(this.scene.add.rectangle(width / 2, height / 2, 360, 360, 0xffffff));
     this.add(this.scene.add.text(width / 2, height / 2 - 140, "상자 비밀번호", { color: "#1f2937", fontFamily: "sans-serif", fontSize: "26px" }).setOrigin(0.5));
-    this.display = this.scene.add.text(width / 2, height / 2 - 95, "_ _ _ _", { color: "#374151", fontFamily: "sans-serif", fontSize: "30px" }).setOrigin(0.5);
+    this.display = this.scene.add.text(width / 2, height / 2 - 95, "_".repeat(this.code.length).split("").join(" "), { color: "#374151", fontFamily: "sans-serif", fontSize: "30px" }).setOrigin(0.5);
     this.add(this.display);
     this.message = this.scene.add.text(width / 2, height / 2 + 135, "", { color: "#dc2626", fontFamily: "sans-serif", fontSize: "16px" }).setOrigin(0.5);
     this.add(this.message);
@@ -24,6 +24,7 @@ class CodePuzzle {
     this.createButton(width / 2, height / 2 + 130 - 45, "0", () => this.append("0"));
     this.createButton(width / 2 - 105, height / 2 + 130 - 45, "삭제", () => this.remove(), 64);
     this.createButton(width / 2 + 105, height / 2 + 130 - 45, "확인", () => this.check(), 64);
+    this.createButton(width / 2 + 135, height / 2 - 145, "닫기", () => this.destroy(), 64);
   }
 
   createButton(x, y, label, onClick, buttonWidth = 54) {

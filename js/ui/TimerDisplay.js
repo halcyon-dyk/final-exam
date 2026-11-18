@@ -21,8 +21,10 @@ class TimerDisplay {
   }
 
   tick() {
+    if (document.hidden) return;
     if (this.state.timeRemaining > 0) {
       this.state.timeRemaining -= 1;
+      this.state.save();
       this.update();
     }
 

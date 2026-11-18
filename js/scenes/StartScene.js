@@ -3,33 +3,32 @@ class StartScene extends Phaser.Scene {
     super("StartScene");
   }
 
+  preload() {
+    this.load.image("startBackground", "js/images/starting%20page.png");
+  }
+
   create() {
     const { width, height } = this.scale;
+    this.add.image(width / 2, height / 2, "startBackground").setDisplaySize(width, height);
 
-    this.add
-      .text(width / 2, height * 0.4, "지하 시설 탈출", {
-        color: "#1f2937",
-        fontFamily: "sans-serif",
-        fontSize: "48px",
-      })
-      .setOrigin(0.5);
-
-    const startButton = this.add
-      .rectangle(width / 2, height * 0.6, 220, 64, 0x2563eb)
-      .setInteractive({ useHandCursor: true });
-
-    this.add
-      .text(width / 2, height * 0.6, "시작", {
-        color: "#ffffff",
-        fontFamily: "sans-serif",
-        fontSize: "28px",
-      })
-      .setOrigin(0.5);
-
-    startButton.on("pointerdown", () => {
+    this.addButtonArea(width / 2, height * 0.526, width * 0.23, height * 0.082, () => {
       window.gameState.reset();
+      window.gameState.save();
       this.scene.start("GameScene");
     });
+
+    if (localStorage.getItem("escapeGameState") !== null) {
+      this.addButtonArea(width / 2, height * 0.631, width * 0.23, height * 0.082, () => {
+        window.gameState.load();
+        this.scene.start("GameScene");
+      });
+    }
+  }
+
+  addButtonArea(x, y, width, height, onClick) {
+    this.add.rectangle(x, y, width, height, 0x000000, 0)
+      .setInteractive({ useHandCursor: true })
+      .on("pointerdown", onClick);
   }
 }
 

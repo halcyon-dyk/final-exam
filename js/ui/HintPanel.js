@@ -21,19 +21,23 @@ class HintPanel {
   }
 
   showHint() {
-    this.state.hintUses += 1;
+    const stage = this.state.hintStages[this.state.currentRoom] ?? 0;
+    if (stage < 3) {
+      this.state.hintStages[this.state.currentRoom] = stage + 1;
+      this.state.hintUses += 1;
+      this.state.save();
+    }
     this.buttonLabel.setText(`힌트 (${this.state.hintUses})`);
-    this.message.setText(`힌트: ${this.getHint()}`);
+    this.message.setText(`힌트: ${this.getHint(this.state.hintStages[this.state.currentRoom] ?? 1)}`);
   }
 
-  getHint() {
+  getHint(stage) {
     const hints = {
-      감금실: "벽과 쪽지를 자세히 조사해 보세요.",
-      정비실: "환풍구의 나사를 풀 수 있는 도구를 찾아보세요.",
-      통제실: "배선도와 전선의 연결 순서를 비교해 보세요.",
+      감금실: ["벽과 침대 아래를 조사하세요.", "기호의 순서와 쪽지의 값을 비교하세요.", "삼각형·원·사각형은 427입니다."],
+      정비실: ["작업대와 공구함을 조사하세요.", "손전등 본체와 배터리를 조합하세요.", "손전등으로 어두운 벽을 비추세요."],
+      통제실: ["배선도와 전선을 조사하세요.", "전선과 단자를 연결한 뒤 확인하세요.", "A→2, B→3, C→1입니다."],
     };
-
-    return hints[this.state.currentRoom] ?? "주변의 단서와 도구를 다시 확인해 보세요.";
+    return hints[this.state.currentRoom]?.[stage - 1] ?? "새 힌트가 없습니다.";
   }
 }
 

@@ -1,8 +1,9 @@
 class InventoryPanel {
-  constructor(scene, state, layout) {
+  constructor(scene, state, layout, onItemSelected) {
     this.scene = scene;
     this.state = state;
     this.layout = layout;
+    this.onItemSelected = onItemSelected;
     const { x, y, width, height } = layout.panel;
 
     this.background = scene.add.rectangle(x + width / 2, y + height / 2, width, height, 0xffffff, 1);
@@ -63,6 +64,7 @@ class InventoryPanel {
       itemText.on("pointerdown", () => {
         this.state.selectItem(item);
         this.render();
+        this.onItemSelected?.(item);
       });
       this.itemTexts.push(itemText);
     });

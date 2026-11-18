@@ -16,26 +16,26 @@ class SequencePuzzle {
     this.add(this.display);
     this.message = this.scene.add.text(width / 2, height / 2 + 82, "", { color: "#dc2626", fontFamily: "sans-serif", fontSize: "16px" }).setOrigin(0.5);
     this.add(this.message);
-    [1, 2, 3, 4].forEach((number, index) => this.createButton(width / 2 - 105 + index * 70, height / 2 + 20, number));
+    ["눈", "달", "톱니"].forEach((symbol, index) => this.createButton(width / 2 - 80 + index * 80, height / 2 + 20, symbol));
   }
 
-  createButton(x, y, number) {
+  createButton(x, y, symbol) {
     const button = this.scene.add.rectangle(x, y, 52, 48, 0x2563eb).setInteractive({ useHandCursor: true });
-    const text = this.scene.add.text(x, y, String(number), { color: "#ffffff", fontFamily: "sans-serif", fontSize: "20px" }).setOrigin(0.5);
-    button.on("pointerdown", () => this.select(number));
+    const text = this.scene.add.text(x, y, symbol, { color: "#ffffff", fontFamily: "sans-serif", fontSize: "18px" }).setOrigin(0.5);
+    button.on("pointerdown", () => this.select(symbol));
     this.add(button);
     this.add(text);
   }
 
-  select(number) {
-    if (number !== this.expected[this.input.length]) {
+  select(symbol) {
+    if (symbol !== this.expected[this.input.length]) {
       this.input = [];
       this.message.setText("순서가 맞지 않습니다.");
       this.update();
       return;
     }
 
-    this.input.push(number);
+    this.input.push(symbol);
     this.update();
     if (this.input.length === this.expected.length) {
       this.destroy();

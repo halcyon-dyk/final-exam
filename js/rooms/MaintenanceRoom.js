@@ -9,44 +9,25 @@ class MaintenanceRoom {
   create() {
     const stage = this.scene.layout.stage;
     this.scene.add.rectangle(stage.x + stage.width / 2, stage.y + stage.height / 2, stage.width, stage.height, 0xb6c2cf);
-    this.createObject(stage.x + stage.width * 0.32, stage.y + stage.height * 0.38, 150, 90, this.state.isSolved("환풍구") ? "열린 환풍구" : "환풍구", this.ventMessage(), () => this.openVent());
-    this.createObject(stage.x + stage.width * 0.7, stage.y + stage.height * 0.52, 110, 55, "배터리", "손전등에 쓸 배터리다.", () => this.collectPart("배터리"));
-
-    if (this.state.isSolved("환풍구") && !this.state.hasItem("전구") && !this.state.isSolved("손전등")) {
-      this.createObject(stage.x + stage.width * 0.32, stage.y + stage.height * 0.58, 90, 42, "전구", "환풍구 안에서 전구를 발견했다.", () => this.collectPart("전구"));
-    }
-  }
-
-  ventMessage() {
-    return this.state.isSolved("환풍구") ? "환풍구가 열려 있다." : "나사로 고정된 환풍구다.";
-  }
-
-  openVent() {
-    if (this.state.isSolved("환풍구")) return;
-    if (this.state.selectedItem !== "드라이버") {
-      this.panel.show("환풍구", "드라이버가 필요하다.");
-      return;
-    }
-
-    this.state.solvePuzzle("환풍구");
-    this.feedback.play("나사가 풀리며 환풍구가 열렸다.");
-    this.scene.time.delayedCall(300, () => this.scene.scene.restart());
+    this.createObject(stage.x + stage.width * 0.32, stage.y + stage.height * 0.38, 150, 90, "손전등 본체", "작업대에 놓인 손전등 본체다.", () => this.collectPart("손전등 본체"));
+    this.createObject(stage.x + stage.width * 0.7, stage.y + stage.height * 0.52, 110, 55, "배터리", "공구함 안에 든 배터리다.", () => this.collectPart("배터리"));
+    this.createObject(stage.x + stage.width * 0.48, stage.y + stage.height * 0.66, 180, 70, "어두운 벽면", "빛을 비추면 무언가 드러날 것 같다.", () => this.useFlashlight());
   }
 
   collectPart(part) {
-    if (this.state.isSolved("손전등")) return;
+    if (this.state.hasItem(part)) return;
     this.state.addItem(part);
-    this.tryCompleteFlashlight();
   }
 
-  tryCompleteFlashlight() {
-    if (!this.state.hasItem("배터리") || !this.state.hasItem("전구")) return;
-    this.state.removeItem("배터리");
-    this.state.removeItem("전구");
-    this.state.addItem("손전등");
-    this.state.solvePuzzle("손전등");
+  useFlashlight() {
+    if (this.state.selectedItem !== "손전등") {
+      this.panel.show("어두운 벽면", "완성된 손전등을 선택해 비춰 보세요.");
+      return;
+    }
+    this.state.solvePuzzle("배선도");
     this.state.solvePuzzle("통제실 통로");
-    this.feedback.play("손전등이 완성되어 통제실 통로가 열렸다.");
+    this.state.addNote("숨겨진 배선도: A→2, B→3, C→1");
+    this.feedback.play("숨겨진 배선도가 드러나 통제실 통로가 열렸다.");
   }
 
   createObject(x, y, width, height, label, message, onInspect) {
