@@ -23,12 +23,27 @@ class GameState {
     }
   }
 
+  removeItem(item) {
+    this.items = this.items.filter((storedItem) => storedItem !== item);
+    if (this.selectedItem === item) {
+      this.selectedItem = null;
+    }
+  }
+
+  hasItem(item) {
+    return this.items.includes(item);
+  }
+
   selectItem(item) {
     this.selectedItem = this.items.includes(item) ? item : null;
   }
 
   solvePuzzle(puzzle) {
     this.solvedPuzzles[puzzle] = true;
+  }
+
+  isSolved(puzzle) {
+    return this.solvedPuzzles[puzzle] === true;
   }
 
   addNote(note) {

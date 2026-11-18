@@ -1,21 +1,21 @@
 class MemoPanel {
-  constructor(scene, state) {
+  constructor(scene, state, layout) {
     this.scene = scene;
     this.state = state;
-    const { width } = scene.scale;
+    const { x, y, width, height } = layout.panel;
 
-    this.background = scene.add.rectangle(width - 145, 125, 240, 180, 0xffffff, 1);
-    this.title = scene.add.text(width - 250, 52, "메모장", {
+    this.background = scene.add.rectangle(x + width / 2, y + height / 2, width, height, 0xffffff, 1);
+    this.title = scene.add.text(x + 16, y + 16, "메모장", {
       color: "#1f2937",
       fontFamily: "sans-serif",
       fontSize: "22px",
     });
-    this.contents = scene.add.text(width - 250, 88, "", {
+    this.contents = scene.add.text(x + 16, y + 52, "", {
       color: "#374151",
       fontFamily: "sans-serif",
       fontSize: "18px",
       lineSpacing: 10,
-      wordWrap: { width: 200 },
+      wordWrap: { width: width - 32 },
     });
     this.elements = [this.background, this.title, this.contents];
     this.hide();

@@ -27,6 +27,7 @@ class StartScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     startButton.on("pointerdown", () => {
+      window.gameState.reset();
       this.scene.start("GameScene");
     });
   }

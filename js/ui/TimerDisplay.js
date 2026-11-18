@@ -1,7 +1,9 @@
 class TimerDisplay {
-  constructor(scene, state) {
+  constructor(scene, state, onTimeExpired) {
     this.scene = scene;
     this.state = state;
+    this.onTimeExpired = onTimeExpired;
+    this.finished = false;
     const { width } = scene.scale;
 
     this.label = scene.add.text(width - 24, 20, "", {
@@ -22,6 +24,11 @@ class TimerDisplay {
     if (this.state.timeRemaining > 0) {
       this.state.timeRemaining -= 1;
       this.update();
+    }
+
+    if (this.state.timeRemaining === 0 && !this.finished) {
+      this.finished = true;
+      this.onTimeExpired?.();
     }
   }
 

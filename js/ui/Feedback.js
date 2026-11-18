@@ -28,14 +28,18 @@ class Feedback {
       return;
     }
 
-    const context = new AudioContext();
-    const oscillator = context.createOscillator();
-    const gain = context.createGain();
-    oscillator.frequency.value = 660;
-    gain.gain.setValueAtTime(0.05, context.currentTime);
-    oscillator.connect(gain).connect(context.destination);
-    oscillator.start();
-    oscillator.stop(context.currentTime + 0.15);
+    try {
+      const context = new AudioContext();
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.frequency.value = 660;
+      gain.gain.setValueAtTime(0.05, context.currentTime);
+      oscillator.connect(gain).connect(context.destination);
+      oscillator.start();
+      oscillator.stop(context.currentTime + 0.15);
+    } catch {
+      // 화면 효과와 소리 단서는 오디오 재생을 지원하지 않는 환경에서도 표시한다.
+    }
   }
 }
 
