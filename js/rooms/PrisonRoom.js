@@ -20,7 +20,7 @@ class PrisonRoom {
     });
 
     if (this.state.isSolved("상자")) {
-      this.createObject(stage.x + stage.width * 0.80, stage.y + stage.height * 0.68, stage.width * 0.25, stage.height * 0.23, "열린 상자", "상자 안에서 드라이버를 발견했다.");
+      this.createObject(stage.x + stage.width * 0.80, stage.y + stage.height * 0.59, stage.width * 0.25, stage.height * 0.40, "열린 상자", "상자 안에서 드라이버를 발견했다.");
       if (!this.state.hasItem("드라이버")) {
         this.createObject(stage.x + stage.width * 0.80, stage.y + stage.height * 0.74, stage.width * 0.14, stage.height * 0.08, "드라이버", "드라이버를 획득했다.", () => {
           this.state.addItem("드라이버");
@@ -54,7 +54,7 @@ class PrisonRoom {
     this.background = this.scene.add.image(
       stage.x + stage.width / 2,
       stage.y + stage.height / 2,
-      this.state.isSolved("정비실 통로") ? "prisonVentOpen" : "prisonBackground",
+      this.state.isSolved("정비실 통로") ? "prisonBoxVentOpen" : this.state.isSolved("상자") ? "prisonBoxOpen" : "prisonBackground",
     ).setDisplaySize(stage.width, stage.height);
   }
 
@@ -68,7 +68,7 @@ class PrisonRoom {
       return;
     }
     this.state.solvePuzzle("정비실 통로");
-    if (this.background) this.background.setTexture("prisonVentOpen").setDisplaySize(this.scene.layout.stage.width, this.scene.layout.stage.height);
+    if (this.background) this.background.setTexture("prisonBoxVentOpen").setDisplaySize(this.scene.layout.stage.width, this.scene.layout.stage.height);
     this.ventTag?.setText("열린 환풍구");
     this.panel.hide();
     window.audioManager.playEffect("screwdriver");

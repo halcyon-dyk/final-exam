@@ -5,7 +5,8 @@ class GameScene extends Phaser.Scene {
 
   preload() {
     this.load.image("prisonBackground", "js/images/prison-background-v2.png");
-    this.load.image("prisonVentOpen", "js/images/prison-vent-open-v2.png");
+    this.load.image("prisonBoxOpen", "js/images/prison-box-open.png");
+    this.load.image("prisonBoxVentOpen", "js/images/prison-box-vent-open.png");
     this.load.image("maintenanceBackground", "js/images/maintenance-background-v2.png");
     this.load.image("maintenanceToolboxOpen", "js/images/maintenance-toolbox-open.png");
     this.load.image("controlDoorOpen", "js/images/control-door-open.png");
@@ -69,6 +70,10 @@ class GameScene extends Phaser.Scene {
   showMenu(help) {
     if (this.pausedForMenu) return;
     this.pausedForMenu = true;
+    if (!help) {
+      new AudioSettingsPanel(this);
+      return;
+    }
     const {width, height} = this.scale;
     const elements = [];
     const add = e => { e.setDepth(500); elements.push(e); return e; };

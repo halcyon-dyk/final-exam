@@ -4,6 +4,44 @@ class AudioManager {
     this.background = null;
     this.room = null;
     this.soundManager = null;
+    this.settings = { music: 0.7, effects: 0.8, muted: false };
+    this.effectSounds = new Map();
+    try {
+      const saved = JSON.parse(localStorage.getItem("escapeAudioSettings"));
+      for (const key of ["music", "effects"]) {
+        if (typeof saved?.[key] === "number" && Number.isFinite(saved[key])) this.settings[key] = Math.max(0, Math.min(1, saved[key]));
+      }
+      if (typeof saved?.muted === "boolean") this.settings.muted = saved.muted;
+    } catch {}
+  }
+
+  setSetting(key, value) {
+    if (key === "muted") this.settings.muted = Boolean(value);
+    else if (["music", "effects"].includes(key) && Number.isFinite(value)) this.settings[key] = Math.max(0, Math.min(1, Math.round(value * 10) / 10));
+    else return;
+    try { localStorage.setItem("escapeAudioSettings", JSON.stringify(this.settings)); } catch {}
+    this.applySettings();
+  }
+
+  level(category) { return this.settings.muted ? 0 : this.settings[category]; }
+
+  applySettings() {
+    if (this.background) this.background.setVolume(this.backgroundBase * this.level("music"));
+    for (const { sound, volume } of this.effectSounds.values()) sound.setVolume(volume * this.level("effects"));
+    if (this.effectsGain) this.effectsGain.gain.setValueAtTime(this.level("effects"), this.context.currentTime);
+  }
+
+  recordedEffect(key, volume = 1, marker) {
+    let entry = this.effectSounds.get(key);
+    if (!entry) {
+      entry = { sound: this.soundManager.add(key), volume };
+      this.effectSounds.set(key, entry);
+    }
+    entry.volume = volume;
+    entry.sound.stop();
+    const config = { volume: volume * this.level("effects") };
+    if (marker) entry.sound.play(marker, config);
+    else entry.sound.play(config);
   }
 
   setSoundManager(soundManager) {
@@ -17,12 +55,23 @@ class AudioManager {
     this.wallSound.addMarker({ name: "inspect", start: 0, duration: 1.2 });
     this.cableSound = soundManager.add("cableSound");
     this.cableSound.addMarker({ name: "connect", start: 0, duration: 1.2 });
+    this.effectSounds = new Map([
+      ["screwdriverSound", { sound: this.screwdriverSound, volume: 1 }],
+      ["boltsSound", { sound: this.boltsSound, volume: 0.85 }],
+      ["wallSound", { sound: this.wallSound, volume: 0.55 }],
+      ["cableSound", { sound: this.cableSound, volume: 0.8 }],
+    ]);
   }
 
   unlock() {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (!AudioContext) return null;
-    if (!this.context) this.context = new AudioContext();
+    if (!this.context) {
+      this.context = new AudioContext();
+      this.effectsGain = this.context.createGain();
+      this.effectsGain.gain.value = this.level("effects");
+      this.effectsGain.connect(this.context.destination);
+    }
     return this.context;
   }
 
@@ -47,7 +96,8 @@ class AudioManager {
     const sound = sounds[room];
     if (!sound) return;
     this.room = room;
-    this.background = this.soundManager.add(sound.key, { loop: true, volume: sound.volume });
+    this.backgroundBase = sound.volume;
+    this.background = this.soundManager.add(sound.key, { loop: true, volume: sound.volume * this.level("music") });
     this.background.play();
   }
 
@@ -61,15 +111,13 @@ class AudioManager {
   }
 
   playEffect(type) {
+    if (this.level("effects") === 0) return;
     if (this.soundManager && type === "cable") {
-      this.cableSound.stop();
-      this.cableSound.play("connect", { volume: 0.8 });
+      this.recordedEffect("cableSound", 0.8, "connect");
       return;
     }
     if (this.soundManager && (type === "bolts" || type === "wall")) {
-      const sound = type === "bolts" ? this.boltsSound : this.wallSound;
-      sound.stop();
-      sound.play("inspect", { volume: type === "bolts" ? 0.85 : 0.55 });
+      this.recordedEffect(type === "bolts" ? "boltsSound" : "wallSound", type === "bolts" ? 0.85 : 0.55, "inspect");
       return;
     }
     const soundKeys = {
@@ -85,11 +133,10 @@ class AudioManager {
     const soundKey = soundKeys[type];
     if (soundKey && this.soundManager) {
       if (type === "screwdriver") {
-        this.screwdriverSound.play("turn", { volume: 1 });
+        this.recordedEffect("screwdriverSound", 1, "turn");
         return;
       }
-      this.soundManager.stopByKey(soundKey);
-      this.soundManager.play(soundKey, { volume: 1 });
+      this.recordedEffect(soundKey, type === "powerRestore" ? 0.4 : 1);
       return;
     }
     this.runAfterUnlock(() => this.playUnlockedEffect(type));
@@ -141,7 +188,7 @@ class AudioManager {
     oscillator.frequency.value = frequency;
     gain.gain.setValueAtTime(volume, start);
     gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-    oscillator.connect(gain).connect(this.context.destination);
+    oscillator.connect(gain).connect(this.effectsGain);
     oscillator.start(start);
     oscillator.stop(start + duration);
   }
@@ -162,7 +209,7 @@ class AudioManager {
     source.buffer = buffer;
     gain.gain.setValueAtTime(volume, start);
     gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
-    source.connect(filter).connect(gain).connect(this.context.destination);
+    source.connect(filter).connect(gain).connect(this.effectsGain);
     source.start(start);
   }
 }

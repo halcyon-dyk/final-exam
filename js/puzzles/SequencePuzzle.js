@@ -10,22 +10,23 @@ class SequencePuzzle {
 
   create() {
     const { width, height } = this.scene.scale;
-    this.add(this.scene.add.rectangle(width / 2, height / 2, 360, 250, 0xffffff));
-    this.add(this.scene.add.text(width / 2, height / 2 - 82, "비상문 해제", { color: "#1f2937", fontFamily: "sans-serif", fontSize: "26px" }).setOrigin(0.5));
-    this.display = this.scene.add.text(width / 2, height / 2 - 35, "입력: ", { color: "#374151", fontFamily: "sans-serif", fontSize: "20px" }).setOrigin(0.5);
+    const panelWidth = Math.min(360, width - 20);
+    this.add(this.scene.add.rectangle(width / 2, height / 2, panelWidth, 340, 0x111315).setStrokeStyle(2, 0xd79a32));
+    this.add(this.scene.add.text(width / 2, height / 2 - 130, "비상문 해제", { color: "#d79a32", fontFamily: "sans-serif", fontSize: "22px" }).setOrigin(0.5));
+    this.add(this.scene.add.rectangle(width / 2, height / 2 - 70, panelWidth - 32, 56, 0x30363a).setStrokeStyle(1, 0xd79a32));
+    this.display = this.scene.add.text(width / 2, height / 2 - 70, "입력: ", { color: "#d7d2c8", fontFamily: "sans-serif", fontSize: "22px" }).setOrigin(0.5);
     this.add(this.display);
-    this.message = this.scene.add.text(width / 2, height / 2 + 82, "", { color: "#dc2626", fontFamily: "sans-serif", fontSize: "16px" }).setOrigin(0.5);
+    this.message = this.scene.add.text(width / 2, height / 2 + 135, "", { color: "#b94343", fontFamily: "sans-serif", fontSize: "18px", align: "center", wordWrap: { width: panelWidth - 24 } }).setOrigin(0.5);
     this.add(this.message);
-    ["눈", "달", "톱니"].forEach((symbol, index) => this.createButton(width / 2 - 80 + index * 80, height / 2 + 20, symbol));
-    this.createButton(width / 2 - 70, height / 2 + 65, "닫기", () => this.destroy());
-    this.createButton(width / 2 + 70, height / 2 + 65, "확인", () => this.check());
-    this.message.setY(height / 2 + 105);
+    ["눈", "달", "톱니"].forEach((symbol, index) => this.createButton(width / 2 - 90 + index * 90, height / 2, symbol));
+    this.createButton(width / 2 - 64, height / 2 + 75, "닫기", () => this.destroy());
+    this.createButton(width / 2 + 64, height / 2 + 75, "확인", () => this.check());
     window.fitDialog(this.scene, this.elements);
   }
 
   createButton(x, y, symbol, action) {
-    const button = this.scene.add.rectangle(x, y, 52, 48, 0x2563eb).setInteractive({ useHandCursor: true });
-    const text = this.scene.add.text(x, y, symbol, { color: "#ffffff", fontFamily: "sans-serif", fontSize: "18px" }).setOrigin(0.5);
+    const button = this.scene.add.rectangle(x, y, 80, 48, symbol === "확인" ? 0xd79a32 : 0x30363a).setStrokeStyle(1, 0xd79a32).setInteractive({ useHandCursor: true });
+    const text = this.scene.add.text(x, y, symbol, { color: symbol === "확인" ? "#111315" : "#d7d2c8", fontFamily: "sans-serif", fontSize: "18px" }).setOrigin(0.5);
     button.on("pointerdown", action || (() => this.select(symbol)));
     this.add(button);
     this.add(text);

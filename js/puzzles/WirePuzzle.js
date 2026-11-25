@@ -10,23 +10,25 @@ class WirePuzzle {
 
   create() {
     const { width, height } = this.scene.scale;
-    this.add(this.scene.add.rectangle(width / 2, height / 2, 420, 410, 0xffffff));
-    this.add(this.scene.add.text(width / 2, height / 2 - 165, "배선 연결", { color: "#1f2937", fontFamily: "sans-serif", fontSize: "26px" }).setOrigin(0.5));
-    this.display = this.scene.add.text(width / 2, height / 2 - 115, "A → -\nB → -\nC → -", { align: "center", color: "#374151", fontFamily: "sans-serif", fontSize: "20px", lineSpacing: 8 }).setOrigin(0.5);
+    const panelWidth = Math.min(400, width - 20);
+    this.add(this.scene.add.rectangle(width / 2, height / 2, panelWidth, 460, 0x111315).setStrokeStyle(2, 0xd79a32));
+    this.add(this.scene.add.text(width / 2, height / 2 - 195, "배선 연결", { color: "#d79a32", fontFamily: "sans-serif", fontSize: "22px" }).setOrigin(0.5));
+    this.add(this.scene.add.rectangle(width / 2, height / 2 - 112, panelWidth - 32, 112, 0x30363a).setStrokeStyle(1, 0xd79a32));
+    this.display = this.scene.add.text(width / 2, height / 2 - 112, "A → -\nB → -\nC → -", { align: "center", color: "#d7d2c8", fontFamily: "sans-serif", fontSize: "22px", lineSpacing: 8 }).setOrigin(0.5);
     this.add(this.display);
-    this.message = this.scene.add.text(width / 2, height / 2 + 165, "전선을 선택한 뒤 단자를 선택하세요.", { color: "#374151", fontFamily: "sans-serif", fontSize: "16px" }).setOrigin(0.5);
+    this.message = this.scene.add.text(width / 2, height / 2 + 192, "전선을 선택한 뒤 단자를 선택하세요.", { color: "#d7d2c8", fontFamily: "sans-serif", fontSize: "18px", align: "center", wordWrap: { width: panelWidth - 24 } }).setOrigin(0.5);
     this.add(this.message);
 
-    ["A", "B", "C"].forEach((wire, index) => this.createButton(width / 2 - 100, height / 2 - 35 + index * 45, wire, () => this.selectWire(wire)));
-    ["1", "2", "3"].forEach((terminal, index) => this.createButton(width / 2 + 100, height / 2 - 35 + index * 45, terminal, () => this.connect(terminal)));
-    this.createButton(width / 2 - 60, height / 2 + 105, "닫기", () => this.destroy(), 90);
-    this.createButton(width / 2 + 60, height / 2 + 105, "확인", () => this.check(), 90);
+    ["A", "B", "C"].forEach((wire, index) => this.createButton(width / 2 - 90, height / 2 - 25 + index * 54, wire, () => this.selectWire(wire)));
+    ["1", "2", "3"].forEach((terminal, index) => this.createButton(width / 2 + 90, height / 2 - 25 + index * 54, terminal, () => this.connect(terminal)));
+    this.createButton(width / 2 - 64, height / 2 + 140, "닫기", () => this.destroy(), 104);
+    this.createButton(width / 2 + 64, height / 2 + 140, "확인", () => this.check(), 104);
     window.fitDialog(this.scene, this.elements);
   }
 
   createButton(x, y, label, onClick, buttonWidth = 56) {
-    const button = this.scene.add.rectangle(x, y, buttonWidth, 38, 0x2563eb).setInteractive({ useHandCursor: true });
-    const text = this.scene.add.text(x, y, label, { color: "#ffffff", fontFamily: "sans-serif", fontSize: "18px" }).setOrigin(0.5);
+    const button = this.scene.add.rectangle(x, y, buttonWidth, 44, label === "확인" ? 0xd79a32 : 0x30363a).setStrokeStyle(1, 0xd79a32).setInteractive({ useHandCursor: true });
+    const text = this.scene.add.text(x, y, label, { color: label === "확인" ? "#111315" : "#d7d2c8", fontFamily: "sans-serif", fontSize: "18px" }).setOrigin(0.5);
     button.on("pointerdown", onClick);
     this.add(button);
     this.add(text);
