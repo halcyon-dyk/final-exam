@@ -1,0 +1,252 @@
+[
+  {
+    "ok": true,
+    "id": "prison",
+    "loaded": true,
+    "observed": {
+      "currentRoom": "감금실",
+      "solvedPuzzles": {},
+      "items": [],
+      "notes": [
+        "상자 기호 순서: 삼각형 → 원 → 사각형",
+        "기호 값: 원=2, 사각형=7, 삼각형=4"
+      ],
+      "timeRemaining": 1134,
+      "hintUses": 1,
+      "hintStages": {
+        "상자": 1
+      }
+    }
+  },
+  {
+    "ok": true,
+    "id": "maintenance-parts",
+    "loaded": true,
+    "observed": {
+      "currentRoom": "정비실",
+      "solvedPuzzles": {
+        "상자": true,
+        "드라이버 획득": true,
+        "정비실 통로": true
+      },
+      "items": [
+        "드라이버",
+        "손전등 본체"
+      ],
+      "notes": [
+        "상자 기호 순서: 삼각형 → 원 → 사각형",
+        "기호 값: 원=2, 사각형=7, 삼각형=4",
+        "작업일지: 작은 볼트부터 큰 볼트 순서로 점검",
+        "작업대 볼트 (왼쪽부터): 중간=⬡ 육각형, 큰=□ 사각형, 작은=△ 삼각형"
+      ],
+      "timeRemaining": 982,
+      "hintUses": 3,
+      "hintStages": {
+        "상자": 1,
+        "공구함": 2
+      }
+    }
+  },
+  {
+    "ok": true,
+    "id": "diagram-only",
+    "loaded": true,
+    "observed": {
+      "currentRoom": "정비실",
+      "solvedPuzzles": {
+        "상자": true,
+        "드라이버 획득": true,
+        "정비실 통로": true,
+        "공구함": true,
+        "배선도": true
+      },
+      "items": [
+        "드라이버",
+        "손전등"
+      ],
+      "notes": [
+        "상자 기호 순서: 삼각형 → 원 → 사각형",
+        "기호 값: 원=2, 사각형=7, 삼각형=4",
+        "작업일지: 작은 볼트부터 큰 볼트 순서로 점검",
+        "작업대 볼트 (왼쪽부터): 중간=⬡ 육각형, 큰=□ 사각형, 작은=△ 삼각형",
+        "숨겨진 배선도: A→2, B→3, C→1"
+      ],
+      "timeRemaining": 851,
+      "hintUses": 2,
+      "hintStages": {
+        "손전등": 2
+      }
+    }
+  },
+  {
+    "ok": true,
+    "id": "passage-open",
+    "loaded": true,
+    "observed": {
+      "currentRoom": "정비실",
+      "solvedPuzzles": {
+        "상자": true,
+        "드라이버 획득": true,
+        "정비실 통로": true,
+        "공구함": true,
+        "배선도": true,
+        "통제실 통로": true
+      },
+      "items": [
+        "드라이버",
+        "손전등"
+      ],
+      "notes": [
+        "상자 기호 순서: 삼각형 → 원 → 사각형",
+        "기호 값: 원=2, 사각형=7, 삼각형=4",
+        "작업일지: 작은 볼트부터 큰 볼트 순서로 점검",
+        "작업대 볼트 (왼쪽부터): 중간=⬡ 육각형, 큰=□ 사각형, 작은=△ 삼각형",
+        "숨겨진 배선도: A→2, B→3, C→1"
+      ],
+      "timeRemaining": 804,
+      "hintUses": 3,
+      "hintStages": {
+        "공구함": 1,
+        "손전등": 2
+      }
+    }
+  },
+  {
+    "ok": true,
+    "id": "control-entered",
+    "loaded": true,
+    "observed": {
+      "currentRoom": "통제실",
+      "solvedPuzzles": {
+        "상자": true,
+        "드라이버 획득": true,
+        "정비실 통로": true,
+        "공구함": true,
+        "배선도": true,
+        "통제실 통로": true
+      },
+      "items": [
+        "드라이버",
+        "손전등"
+      ],
+      "notes": [
+        "상자 기호 순서: 삼각형 → 원 → 사각형",
+        "기호 값: 원=2, 사각형=7, 삼각형=4",
+        "작업일지: 작은 볼트부터 큰 볼트 순서로 점검",
+        "작업대 볼트 (왼쪽부터): 중간=⬡ 육각형, 큰=□ 사각형, 작은=△ 삼각형",
+        "숨겨진 배선도: A→2, B→3, C→1"
+      ],
+      "timeRemaining": 733,
+      "hintUses": 1,
+      "hintStages": {
+        "배선": 1
+      }
+    }
+  },
+  {
+    "ok": true,
+    "id": "door-unsolved",
+    "loaded": true,
+    "observed": {
+      "currentRoom": "통제실",
+      "solvedPuzzles": {
+        "상자": true,
+        "드라이버 획득": true,
+        "정비실 통로": true,
+        "공구함": true,
+        "배선도": true,
+        "통제실 통로": true,
+        "배선": true
+      },
+      "items": [
+        "드라이버",
+        "손전등"
+      ],
+      "notes": [
+        "상자 기호 순서: 삼각형 → 원 → 사각형",
+        "기호 값: 원=2, 사각형=7, 삼각형=4",
+        "작업일지: 작은 볼트부터 큰 볼트 순서로 점검",
+        "작업대 볼트 (왼쪽부터): 중간=⬡ 육각형, 큰=□ 사각형, 작은=△ 삼각형",
+        "숨겨진 배선도: A→2, B→3, C→1",
+        "해제 순서: 통제실 → 감금실 → 정비실",
+        "시설 기호: 감금실=달, 정비실=톱니, 통제실=눈"
+      ],
+      "timeRemaining": 612,
+      "hintUses": 5,
+      "hintStages": {
+        "배선": 2,
+        "비상문": 3
+      }
+    }
+  },
+  {
+    "ok": true,
+    "id": "door-open",
+    "loaded": true,
+    "observed": {
+      "currentRoom": "통제실",
+      "solvedPuzzles": {
+        "상자": true,
+        "드라이버 획득": true,
+        "정비실 통로": true,
+        "공구함": true,
+        "배선도": true,
+        "통제실 통로": true,
+        "배선": true,
+        "비상문": true
+      },
+      "items": [
+        "드라이버",
+        "손전등"
+      ],
+      "notes": [
+        "상자 기호 순서: 삼각형 → 원 → 사각형",
+        "기호 값: 원=2, 사각형=7, 삼각형=4",
+        "작업일지: 작은 볼트부터 큰 볼트 순서로 점검",
+        "작업대 볼트 (왼쪽부터): 중간=⬡ 육각형, 큰=□ 사각형, 작은=△ 삼각형",
+        "숨겨진 배선도: A→2, B→3, C→1",
+        "해제 순서: 통제실 → 감금실 → 정비실",
+        "시설 기호: 감금실=달, 정비실=톱니, 통제실=눈"
+      ],
+      "timeRemaining": 504,
+      "hintUses": 1,
+      "hintStages": {
+        "비상문": 1
+      }
+    }
+  },
+  {
+    "ok": true,
+    "id": "legacy-battery",
+    "loaded": true,
+    "observed": {
+      "currentRoom": "정비실",
+      "solvedPuzzles": {
+        "상자": true,
+        "드라이버 획득": true,
+        "정비실 통로": true,
+        "공구함": true
+      },
+      "items": [
+        "드라이버",
+        "손전등 본체",
+        "배터리"
+      ],
+      "notes": [
+        "상자 기호 순서: 삼각형 → 원 → 사각형",
+        "기호 값: 원=2, 사각형=7, 삼각형=4"
+      ],
+      "timeRemaining": 903,
+      "hintUses": 1,
+      "hintStages": {
+        "손전등": 1
+      }
+    }
+  },
+  {
+    "ok": true,
+    "id": "no-save",
+    "loaded": false,
+    "observed": null
+  }
+]

@@ -60,6 +60,9 @@ class MemoPanel {
     this.title.setText(`메모 ${count ? this.page + 1 : 0}/${count}`);
     const note = this.state.notes[this.page];
     this.contents.setText(!note ? "기록한 단서가 없습니다." : this.isMobile ? `${note.slice(0, 12)}…\n눌러서 전체 보기` : note);
+    if (note && !this.isMobile && this.contents.height > this.background.height - 64) {
+      this.contents.setText(`${note.slice(0, 12)}…\n눌러서 전체 보기`);
+    }
   }
 }
 

@@ -14,9 +14,11 @@ class PrisonRoom {
       window.audioManager.playEffect("scribble");
       this.state.addNote("상자 기호 순서: 삼각형 → 원 → 사각형");
     });
-    this.createObject(stage.x + stage.width * 0.5, stage.y + stage.height * 0.845, stage.width * 0.12, stage.height * 0.08, "바닥 쪽지", "원=2, 사각형=7, 삼각형=4라고 적혀 있다.", () => {
+    const legacyNote = "기호 값: 원=2, 사각형=7, 삼각형=4";
+    const prisonNote = `${legacyNote}\n\n감시를 피해 숫자를 기호로 남겼다. 상자 안의 도구로 환풍구를 열어라. 다음 안내는 정비실 작업일지에 있다. — R`;
+    this.createObject(stage.x + stage.width * 0.5, stage.y + stage.height * 0.845, stage.width * 0.12, stage.height * 0.08, "바닥 쪽지", prisonNote, () => {
       window.audioManager.playEffect("paper");
-      this.state.addNote("기호 값: 원=2, 사각형=7, 삼각형=4");
+      this.state.addClue("prison-note", prisonNote, legacyNote);
     });
 
     if (this.state.isSolved("상자")) {

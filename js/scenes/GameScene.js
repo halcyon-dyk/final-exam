@@ -65,6 +65,10 @@ class GameScene extends Phaser.Scene {
     this.createRoom();
 
     this.createToolbar(width);
+    if (this.state.migrationNoticePending) {
+      this.state.migrationNoticePending = false;
+      this.feedback.play("기록 해석이 갱신되었습니다.\n메모장에서 확인하세요", undefined, 5000);
+    }
   }
 
   showMenu(help) {

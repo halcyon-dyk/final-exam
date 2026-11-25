@@ -11,8 +11,8 @@ class ControlRoom {
     this.createBackground(stage);
     this.createObject(stage.x + stage.width * 0.17, stage.y + stage.height * 0.235, stage.width * 0.22, stage.height * 0.37, "배선도", "연결 관계는 A→2, B→3, C→1이다.");
     this.createObject(stage.x + stage.width * 0.55, stage.y + stage.height * 0.52, stage.width * 0.4, stage.height * 0.48, "전선", "배선도를 보고 연결해야 한다.", () => this.openWirePuzzle(), true);
-    this.createObject(stage.x + stage.width * 0.18, stage.y + stage.height * 0.57, stage.width * 0.28, stage.height * 0.27, "실험 기록", "통제실 → 감금실 → 정비실 순서로 해제하라.", () => this.state.addNote("해제 순서: 통제실 → 감금실 → 정비실"));
-    this.createObject(stage.x + stage.width * 0.7, stage.y + stage.height * 0.78, stage.width * 0.42, stage.height * 0.4, "시설 지도", "감금실=달, 정비실=톱니, 통제실=눈", () => this.state.addNote("시설 기호: 감금실=달, 정비실=톱니, 통제실=눈"));
+    this.createObject(stage.x + stage.width * 0.18, stage.y + stage.height * 0.57, stage.width * 0.28, stage.height * 0.27, "실험 기록", "", () => this.panel.showPages("실험 기록", this.state.discoverDocument("incident-records")), true);
+    this.createObject(stage.x + stage.width * 0.7, stage.y + stage.height * 0.78, stage.width * 0.42, stage.height * 0.4, "시설 지도", "", () => this.panel.showPages("시설 지도", this.state.discoverDocument("facility-map")), true);
     this.createObject(stage.x + stage.width * 0.9, stage.y + stage.height * 0.36, stage.width * 0.2, stage.height * 0.55, this.state.isSolved("비상문") ? "열린 비상문" : "비상문", this.doorMessage(), () => this.openDoor());
   }
 
@@ -76,14 +76,14 @@ class ControlRoom {
       this.scene.scene.start("ResultScene", { success: true });
       return;
     }
-    if (!this.state.isSolved("배선") || !this.state.notes.includes("해제 순서: 통제실 → 감금실 → 정비실") || !this.state.notes.includes("시설 기호: 감금실=달, 정비실=톱니, 통제실=눈")) {
+    if (!this.state.isSolved("배선") || !this.state.clueIds.includes("incident-records") || !this.state.clueIds.includes("facility-map")) {
       window.audioManager.playEffect("metal");
       this.panel.show("비상문", "전원을 복구하고 실험 기록과 시설 지도를 조사해야 한다.");
       return;
     }
     window.audioManager.playEffect("click");
     this.panel.hide();
-    const puzzle = new SequencePuzzle(this.scene, ["눈", "달", "톱니"], () => {
+    const puzzle = new SequencePuzzle(this.scene, ["톱니", "달", "눈"], () => {
       this.state.solvePuzzle("비상문");
       this.refreshVisuals();
       this.feedback.play("비상문이 열렸다.", "doorOpen");

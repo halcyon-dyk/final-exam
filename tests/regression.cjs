@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const store = new Map();
 const ctx = {window: {}, localStorage: {getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(k,v),removeItem:k=>store.delete(k)},document:{hidden:false},Phaser:{Scene:class{}},setTimeout,clearTimeout};
 vm.createContext(ctx);
-for(const file of ['state/GameState','ui/Layout','ui/HintPanel','ui/TimerDisplay','puzzles/CodePuzzle','puzzles/WirePuzzle','puzzles/SequencePuzzle','puzzles/ToolboxPuzzle','rooms/MaintenanceRoom','rooms/ControlRoom','scenes/GameScene']) vm.runInContext(fs.readFileSync(`js/${file}.js`,'utf8'),ctx);
+for(const file of ['state/Clues','state/GameState','ui/Layout','ui/HintPanel','ui/TimerDisplay','puzzles/CodePuzzle','puzzles/WirePuzzle','puzzles/SequencePuzzle','puzzles/ToolboxPuzzle','rooms/MaintenanceRoom','rooms/ControlRoom','scenes/GameScene']) vm.runInContext(fs.readFileSync(`js/${file}.js`,'utf8'),ctx);
 const sounds=[];ctx.window.audioManager={playEffect:t=>sounds.push(t)};
 const state=ctx.window.gameState;
 assert.equal(state.hasActiveSave(),false);state.save();assert.equal(state.hasActiveSave(),true);
@@ -24,13 +24,13 @@ assert(bad.elements.some(e=>e.text==='닫기'));assert(bad.elements.some(e=>e.te
 const code=new ctx.window.CodePuzzle(scene,'427',()=>{});
 const eight=code.elements.find(e=>e.text==='8'),zero=code.elements.find(e=>e.text==='0');assert(zero.y-eight.y>42);
 const control=new ctx.window.ControlRoom(scene,panel,state,feedback);
-state.solvePuzzle('배선');state.addNote('해제 순서: 통제실 → 감금실 → 정비실');
+state.solvePuzzle('배선');state.discoverDocument('incident-records');
 let opened=0;vm.runInContext('SequencePuzzle = class {constructor(){window.opened=true}}',ctx);
 control.openDoor();assert.equal(ctx.window.opened,undefined);
-state.addNote('시설 기호: 감금실=달, 정비실=톱니, 통제실=눈');control.openDoor();assert.equal(ctx.window.opened,true);
+state.discoverDocument('facility-map');control.openDoor();assert.equal(ctx.window.opened,true);
 state.reset();const hint=Object.create(ctx.window.HintPanel.prototype);hint.state=state;
 assert.equal(hint.getTask(),'상자');state.solvePuzzle('상자');assert.equal(hint.getTask(),'환풍구');
-state.solvePuzzle('정비실 통로');assert.equal(hint.getTask(),'공구함');state.solvePuzzle('공구함');assert.equal(hint.getTask(),'손전등');state.solvePuzzle('배선도');assert.equal(hint.getTask(),'배선');state.solvePuzzle('배선');assert.equal(hint.getTask(),'비상문');
+state.solvePuzzle('정비실 통로');assert.equal(hint.getTask(),'공구함');state.solvePuzzle('공구함');assert.equal(hint.getTask(),'손전등');state.solvePuzzle('배선도');assert.equal(hint.getTask(),'전력 배분');state.solvePuzzle('전력 배분');assert.equal(hint.getTask(),'배선');state.solvePuzzle('배선');assert.equal(hint.getTask(),'비상문');
 const timer=Object.create(ctx.window.TimerDisplay.prototype);timer.state=state;timer.scene={pausedForMenu:true};timer.update=()=>{};
 timer.tick();assert.equal(state.timeRemaining,1200);timer.scene.pausedForMenu=false;timer.tick();assert.equal(state.timeRemaining,1199);
 // Capture the real puzzle opened by the room to exercise its reward callback.
@@ -49,8 +49,11 @@ for(const legacy of ['배터리','손전등','배선도']) {
   const count=state.items.length;maintenance.openToolbox();assert.equal(state.items.length,count);
 }
 state.reset();state.solvePuzzle('상자');state.solvePuzzle('정비실 통로');
-hint.buttonLabel={setText(){}};hint.scene={investigationPanel:{show(){}}};
-for(let i=0;i<4;i++)hint.showHint();assert.equal(state.hintUses,3);assert.equal(state.hintStages['공구함'],3);
+let hintAction;
+hint.buttonLabel={setText(){}};hint.scene={investigationPanel:{showPages(title,pages,page,action){hintAction=action;}}};
+hint.showHint();assert.equal(state.hintUses,0);
+for(let i=0;i<3;i++){hintAction.onClick();hint.showHint();}
+assert.equal(hintAction,null);assert.equal(state.hintUses,3);assert.equal(state.hintStages['공구함'],3);
 state.reset();state.load();assert.equal(state.hintStages['공구함'],3);assert.equal(hint.getTask(),'공구함');
 state.solvePuzzle('공구함');assert.equal(hint.getTask(),'손전등');
 state.reset();assert.equal(state.isSolved('공구함'),false);assert.equal(state.hintUses,0);
@@ -62,4 +65,4 @@ for(const width of [320,390,960]) {
     const a=controls[i].getBounds(),b=controls[j].getBounds();assert(a.right<=b.left||b.right<=a.left||a.bottom<=b.top||b.bottom<=a.top);
   }
 }
-console.log('PASS: existing regression checks, toolbox confirmation/error/close/reward, locked battery, legacy saves, six hint stages, reset and 320/390/960 dialog bounds.');
+console.log('PASS: existing regression checks, toolbox confirmation/error/close/reward, locked battery, legacy saves, seven hint tasks, free rereading, reset and 320/390/960 dialog bounds.');

@@ -14,20 +14,25 @@ class StartScene extends Phaser.Scene {
       return;
     }
     this.add.image(width / 2, height / 2, "startBackground").setDisplaySize(width, height);
+    // Metal button bounds in the 1548 × 1016 background image.
+    const buttonX = width * 756 / 1548;
+    const buttonWidth = width * 352 / 1548;
+    const buttonHeight = height * 78 / 1016;
+    const continueY = height * 651 / 1016;
 
-    this.addButtonArea(width / 2, height * 0.526, width * 0.23, height * 0.082, () => {
+    this.addButtonArea(buttonX, height * 541 / 1016, buttonWidth, buttonHeight, () => {
       if (window.gameState.hasActiveSave()) this.confirmNewGame();
       else this.startNewGame();
     });
 
     if (window.gameState.hasActiveSave()) {
-      this.addButtonArea(width / 2, height * 0.631, width * 0.23, height * 0.082, () => {
+      this.addButtonArea(buttonX, continueY, buttonWidth, buttonHeight, () => {
         if (!window.gameState.load()) return;
         window.audioManager.playEffect("click");
         this.scene.start("GameScene");
       });
     } else {
-      this.add.rectangle(width / 2, height * 0.631, width * 0.23, height * 0.082, 0x111315, 0.65);
+      this.add.rectangle(buttonX, continueY, buttonWidth, buttonHeight, 0x111315, 0.65);
     }
     const placements = this.children.list.map(object => ({object, x:object.x/width, y:object.y/height, w:object.displayWidth/width, h:object.displayHeight/height}));
     const resize = ({width, height}) => {

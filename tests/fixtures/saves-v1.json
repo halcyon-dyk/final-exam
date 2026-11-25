@@ -1,0 +1,263 @@
+{
+  "description": "2026-11-26 강화 이전 버전 1 형식의 합성 검증 사본. 실제 사용자 저장을 추출하지 않음. 버전·단서 ID 필드가 없는 원본 기준값을 보존한다.",
+  "cases": [
+    {
+      "id": "prison",
+      "label": "감금실 단서 조사 중",
+      "kind": "normal",
+      "save": {
+        "currentRoom": "감금실",
+        "solvedPuzzles": {},
+        "items": [],
+        "notes": [
+          "상자 기호 순서: 삼각형 → 원 → 사각형",
+          "기호 값: 원=2, 사각형=7, 삼각형=4"
+        ],
+        "timeRemaining": 1134,
+        "hintUses": 1,
+        "hintStages": {
+          "상자": 1
+        }
+      },
+      "expectedPower": "미해결"
+    },
+    {
+      "id": "maintenance-parts",
+      "label": "정비실 손전등 미완성",
+      "kind": "normal",
+      "save": {
+        "currentRoom": "정비실",
+        "solvedPuzzles": {
+          "상자": true,
+          "드라이버 획득": true,
+          "정비실 통로": true
+        },
+        "items": [
+          "드라이버",
+          "손전등 본체"
+        ],
+        "notes": [
+          "상자 기호 순서: 삼각형 → 원 → 사각형",
+          "기호 값: 원=2, 사각형=7, 삼각형=4",
+          "작업일지: 작은 볼트부터 큰 볼트 순서로 점검",
+          "작업대 볼트 (왼쪽부터): 중간=⬡ 육각형, 큰=□ 사각형, 작은=△ 삼각형"
+        ],
+        "timeRemaining": 982,
+        "hintUses": 3,
+        "hintStages": {
+          "상자": 1,
+          "공구함": 2
+        }
+      },
+      "expectedPower": "미해결"
+    },
+    {
+      "id": "diagram-only",
+      "label": "배선도 발견·통로 미개방",
+      "kind": "boundary",
+      "save": {
+        "currentRoom": "정비실",
+        "solvedPuzzles": {
+          "상자": true,
+          "드라이버 획득": true,
+          "정비실 통로": true,
+          "공구함": true,
+          "배선도": true
+        },
+        "items": [
+          "드라이버",
+          "손전등"
+        ],
+        "notes": [
+          "상자 기호 순서: 삼각형 → 원 → 사각형",
+          "기호 값: 원=2, 사각형=7, 삼각형=4",
+          "작업일지: 작은 볼트부터 큰 볼트 순서로 점검",
+          "작업대 볼트 (왼쪽부터): 중간=⬡ 육각형, 큰=□ 사각형, 작은=△ 삼각형",
+          "숨겨진 배선도: A→2, B→3, C→1"
+        ],
+        "timeRemaining": 851,
+        "hintUses": 2,
+        "hintStages": {
+          "손전등": 2
+        }
+      },
+      "expectedPower": "미해결"
+    },
+    {
+      "id": "passage-open",
+      "label": "통로 개방·정비실에 머무름",
+      "kind": "normal",
+      "save": {
+        "currentRoom": "정비실",
+        "solvedPuzzles": {
+          "상자": true,
+          "드라이버 획득": true,
+          "정비실 통로": true,
+          "공구함": true,
+          "배선도": true,
+          "통제실 통로": true
+        },
+        "items": [
+          "드라이버",
+          "손전등"
+        ],
+        "notes": [
+          "상자 기호 순서: 삼각형 → 원 → 사각형",
+          "기호 값: 원=2, 사각형=7, 삼각형=4",
+          "작업일지: 작은 볼트부터 큰 볼트 순서로 점검",
+          "작업대 볼트 (왼쪽부터): 중간=⬡ 육각형, 큰=□ 사각형, 작은=△ 삼각형",
+          "숨겨진 배선도: A→2, B→3, C→1"
+        ],
+        "timeRemaining": 804,
+        "hintUses": 3,
+        "hintStages": {
+          "공구함": 1,
+          "손전등": 2
+        }
+      },
+      "expectedPower": "완료 보정"
+    },
+    {
+      "id": "control-entered",
+      "label": "통제실 진입·기록 미발견",
+      "kind": "normal",
+      "save": {
+        "currentRoom": "통제실",
+        "solvedPuzzles": {
+          "상자": true,
+          "드라이버 획득": true,
+          "정비실 통로": true,
+          "공구함": true,
+          "배선도": true,
+          "통제실 통로": true
+        },
+        "items": [
+          "드라이버",
+          "손전등"
+        ],
+        "notes": [
+          "상자 기호 순서: 삼각형 → 원 → 사각형",
+          "기호 값: 원=2, 사각형=7, 삼각형=4",
+          "작업일지: 작은 볼트부터 큰 볼트 순서로 점검",
+          "작업대 볼트 (왼쪽부터): 중간=⬡ 육각형, 큰=□ 사각형, 작은=△ 삼각형",
+          "숨겨진 배선도: A→2, B→3, C→1"
+        ],
+        "timeRemaining": 733,
+        "hintUses": 1,
+        "hintStages": {
+          "배선": 1
+        }
+      },
+      "expectedPower": "완료 보정"
+    },
+    {
+      "id": "door-unsolved",
+      "label": "배선 해결·비상문 미해결·옛 힌트 공개",
+      "kind": "normal",
+      "save": {
+        "currentRoom": "통제실",
+        "solvedPuzzles": {
+          "상자": true,
+          "드라이버 획득": true,
+          "정비실 통로": true,
+          "공구함": true,
+          "배선도": true,
+          "통제실 통로": true,
+          "배선": true
+        },
+        "items": [
+          "드라이버",
+          "손전등"
+        ],
+        "notes": [
+          "상자 기호 순서: 삼각형 → 원 → 사각형",
+          "기호 값: 원=2, 사각형=7, 삼각형=4",
+          "작업일지: 작은 볼트부터 큰 볼트 순서로 점검",
+          "작업대 볼트 (왼쪽부터): 중간=⬡ 육각형, 큰=□ 사각형, 작은=△ 삼각형",
+          "숨겨진 배선도: A→2, B→3, C→1",
+          "해제 순서: 통제실 → 감금실 → 정비실",
+          "시설 기호: 감금실=달, 정비실=톱니, 통제실=눈"
+        ],
+        "timeRemaining": 612,
+        "hintUses": 5,
+        "hintStages": {
+          "배선": 2,
+          "비상문": 3
+        }
+      },
+      "expectedPower": "완료 보정"
+    },
+    {
+      "id": "door-open",
+      "label": "비상문 개방·탈출 전",
+      "kind": "normal",
+      "save": {
+        "currentRoom": "통제실",
+        "solvedPuzzles": {
+          "상자": true,
+          "드라이버 획득": true,
+          "정비실 통로": true,
+          "공구함": true,
+          "배선도": true,
+          "통제실 통로": true,
+          "배선": true,
+          "비상문": true
+        },
+        "items": [
+          "드라이버",
+          "손전등"
+        ],
+        "notes": [
+          "상자 기호 순서: 삼각형 → 원 → 사각형",
+          "기호 값: 원=2, 사각형=7, 삼각형=4",
+          "작업일지: 작은 볼트부터 큰 볼트 순서로 점검",
+          "작업대 볼트 (왼쪽부터): 중간=⬡ 육각형, 큰=□ 사각형, 작은=△ 삼각형",
+          "숨겨진 배선도: A→2, B→3, C→1",
+          "해제 순서: 통제실 → 감금실 → 정비실",
+          "시설 기호: 감금실=달, 정비실=톱니, 통제실=눈"
+        ],
+        "timeRemaining": 504,
+        "hintUses": 1,
+        "hintStages": {
+          "비상문": 1
+        }
+      },
+      "expectedPower": "완료 보정"
+    },
+    {
+      "id": "legacy-battery",
+      "label": "공구함 도입 전 배터리 보유",
+      "kind": "legacy",
+      "save": {
+        "currentRoom": "정비실",
+        "solvedPuzzles": {
+          "상자": true,
+          "드라이버 획득": true,
+          "정비실 통로": true
+        },
+        "items": [
+          "드라이버",
+          "손전등 본체",
+          "배터리"
+        ],
+        "notes": [
+          "상자 기호 순서: 삼각형 → 원 → 사각형",
+          "기호 값: 원=2, 사각형=7, 삼각형=4"
+        ],
+        "timeRemaining": 903,
+        "hintUses": 1,
+        "hintStages": {
+          "손전등": 1
+        }
+      },
+      "expectedPower": "미해결"
+    },
+    {
+      "id": "no-save",
+      "label": "저장 없음·완료 후 저장 삭제",
+      "kind": "empty",
+      "save": null,
+      "expectedPower": "새 게임에서 미해결"
+    }
+  ]
+}

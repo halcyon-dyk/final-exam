@@ -16,9 +16,7 @@ class MaintenanceRoom {
     this.toolboxTag = this.createObject(stage.x + stage.width * 0.84, stage.y + stage.height * 0.50, stage.width * 0.23, stage.height * 0.16, "공구함", "배터리가 보관된 공구함이다. 기호 잠금장치가 달려 있다.", () => this.openToolbox());
     this.createObject(stage.x + stage.width * 0.18, stage.y + stage.height * 0.55, stage.width * 0.18, stage.height * 0.13, "작업일지", "낡은 정비 작업일지다.", () => {
       window.audioManager.playEffect("paper");
-      const note = "작업일지: 작은 볼트부터 큰 볼트 순서로 점검";
-      this.state.addNote(note);
-      this.panel.show("작업일지", note);
+      this.panel.showPages("작업일지", this.state.discoverDocument("maintenance-journal"));
     });
     this.createObject(stage.x + stage.width * 0.51, stage.y + stage.height * 0.53, stage.width * 0.23, stage.height * 0.13, "볼트 조사", "크기가 다른 볼트 세 개가 놓여 있다.", () => {
       window.audioManager.playEffect("bolts");
@@ -27,6 +25,7 @@ class MaintenanceRoom {
       ToolboxPuzzle.showBolts(this.scene);
     });
     this.createObject(stage.x + stage.width * 0.63, stage.y + stage.height * 0.28, stage.width * 0.32, stage.height * 0.22, "어두운 벽면", "빛을 비추면 무언가 드러날 것 같다.", () => this.useFlashlight());
+    this.createObject(stage.x + stage.width * 0.325, stage.y + stage.height * 0.267, stage.width * 0.10, stage.height * 0.18, "전력반", "통로 장비의 전력을 배분하는 장치다.", () => this.openPowerPuzzle());
     this.refreshVisuals();
   }
 
@@ -36,16 +35,21 @@ class MaintenanceRoom {
       stage.y + stage.height / 2,
       "maintenanceBackground",
     ).setDisplaySize(stage.width, stage.height);
+    this.powerStatus = this.scene.add.text(stage.x + 8, stage.y + stage.height - 34, "", {
+      fontSize: "18px", fontFamily: "sans-serif", color: "#d79a32", backgroundColor: "#111315",
+      padding: { left: 8, right: 8, top: 6, bottom: 6 },
+    }).setDepth(1);
   }
 
   refreshVisuals() {
     const open = this.state.isSolved("공구함");
+    this.powerStatus?.setText(this.state.isSolved("전력 배분") ? "환기 작동 · 통로 조명 켜짐" : "환기 정지 · 통로 조명 꺼짐");
     this.background?.setTexture(open ? "maintenanceToolboxOpen" : "maintenanceBackground");
     if (this.background) this.background.setDisplaySize(this.scene.layout.stage.width, this.scene.layout.stage.height);
     this.toolboxTag?.setText(open ? "열린 공구함" : "공구함");
     if (this.toolboxTag) {
       const stage = this.scene.layout.stage;
-      this.toolboxTag.y = stage.y + stage.height * (open ? 0.25 : 0.42) - 4;
+      this.toolboxTag.y = stage.y + stage.height * (open ? (this.scene.layout.isMobile ? 0.34 : 0.25) : 0.42) - 4;
       this.toolboxTag.x = Math.min(stage.x + stage.width * 0.84, stage.x + stage.width - this.toolboxTag.width / 2);
     }
   }
@@ -81,10 +85,32 @@ class MaintenanceRoom {
       return;
     }
     this.state.solvePuzzle("배선도");
-    this.state.solvePuzzle("통제실 통로");
     this.state.addNote("숨겨진 배선도: A→2, B→3, C→1");
+    this.state.discoverDocument("equipment-labels");
     this.panel.hide();
-    this.feedback.play("숨겨진 배선도를 메모장에 기록했다.\n통제실로 가는 통로가 열렸다.", "flashlight", 5000);
+    this.feedback.play("배선도와 장비 대응표를 메모장에 기록했다.\n전력반에서 통로 전력을 복구하자.", "flashlight", 5000);
+  }
+
+  openPowerPuzzle() {
+    if (this.state.isSolved("전력 배분")) {
+      this.panel.show("전력반", "전력 배분이 완료되어 있다.\nI 켜짐 · II 꺼짐 · III 켜짐");
+      return;
+    }
+    const missing = [];
+    if (!this.state.clueIds.includes("maintenance-journal")) missing.push("작업대의 작업일지를 조사하세요.");
+    if (!this.state.clueIds.includes("equipment-labels")) missing.push("손전등으로 어두운 벽의 장비 표시를 확인하세요.");
+    if (missing.length) {
+      this.panel.show("전력반", missing.join("\n"));
+      return;
+    }
+    this.panel.hide();
+    new PowerPuzzle(this.scene, () => {
+      this.state.solvedPuzzles["전력 배분"] = true;
+      this.state.solvedPuzzles["통제실 통로"] = true;
+      this.state.save();
+      this.refreshVisuals();
+      this.feedback.play("환기와 통로 조명이 복구되었다.\n통제실로 가는 통로가 열렸다.", "powerRestore", 5000);
+    });
   }
 
   createObject(x, y, width, height, label, message, onInspect) {
