@@ -3,9 +3,9 @@ class Feedback {
     this.scene = scene;
   }
 
-  play(message) {
+  play(message, soundType = "feedback") {
     const { width, height } = this.scene.scale;
-    this.scene.cameras.main.flash(250, 255, 236, 153);
+    if (localStorage.getItem("escapeDisableFlash") !== "true") this.scene.cameras.main.flash(250, 255, 236, 153);
     const cue = this.scene.add.text(width / 2, height * 0.8, `🔊 ${message}`, {
       color: "#1f2937",
       fontFamily: "sans-serif",
@@ -19,7 +19,11 @@ class Feedback {
       duration: 500,
       onComplete: () => cue.destroy(),
     });
-    this.playWarningTone();
+    if (soundType === "feedback") {
+      this.playWarningTone();
+    } else {
+      window.audioManager.playEffect(soundType);
+    }
   }
 
   playWarningTone() {

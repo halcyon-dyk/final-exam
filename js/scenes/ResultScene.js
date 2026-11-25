@@ -13,8 +13,10 @@ class ResultScene extends Phaser.Scene {
   }
 
   create() {
+    window.watchResize(this);
     const { width, height } = this.scale;
     const state = window.gameState;
+    state.clearSave();
     const score = this.success ? Math.max(0, 1000 + state.timeRemaining * 5 - state.hintUses * 100) : 0;
 
     if (this.success) {

@@ -17,18 +17,28 @@ class SequencePuzzle {
     this.message = this.scene.add.text(width / 2, height / 2 + 82, "", { color: "#dc2626", fontFamily: "sans-serif", fontSize: "16px" }).setOrigin(0.5);
     this.add(this.message);
     ["눈", "달", "톱니"].forEach((symbol, index) => this.createButton(width / 2 - 80 + index * 80, height / 2 + 20, symbol));
+    this.createButton(width / 2 - 70, height / 2 + 65, "닫기", () => this.destroy());
+    this.createButton(width / 2 + 70, height / 2 + 65, "확인", () => this.check());
+    this.message.setY(height / 2 + 105);
+    window.fitDialog(this.scene, this.elements);
   }
 
-  createButton(x, y, symbol) {
+  createButton(x, y, symbol, action) {
     const button = this.scene.add.rectangle(x, y, 52, 48, 0x2563eb).setInteractive({ useHandCursor: true });
     const text = this.scene.add.text(x, y, symbol, { color: "#ffffff", fontFamily: "sans-serif", fontSize: "18px" }).setOrigin(0.5);
-    button.on("pointerdown", () => this.select(symbol));
+    button.on("pointerdown", action || (() => this.select(symbol)));
     this.add(button);
     this.add(text);
   }
 
   select(symbol) {
-    if (symbol !== this.expected[this.input.length]) {
+    if (this.input.length < this.expected.length) this.input.push(symbol);
+    this.message.setText("");
+    this.update();
+  }
+
+  check() {
+    if (this.input.join(",") !== this.expected.join(",")) {
       this.input = [];
       this.message.setText("순서가 맞지 않습니다.");
       window.audioManager.playEffect("error");
@@ -36,12 +46,8 @@ class SequencePuzzle {
       return;
     }
 
-    this.input.push(symbol);
-    this.update();
-    if (this.input.length === this.expected.length) {
-      this.destroy();
-      this.onSuccess();
-    }
+    this.destroy();
+    this.onSuccess();
   }
 
   update() { this.display.setText(`입력: ${this.input.join(" → ")}`); }

@@ -1,13 +1,16 @@
 class AudioManager {
   constructor() {
     this.context = null;
-    this.background = [];
+    this.background = null;
     this.room = null;
     this.soundManager = null;
   }
 
   setSoundManager(soundManager) {
+    if (this.soundManager === soundManager) return;
     this.soundManager = soundManager;
+    this.screwdriverSound = soundManager.add("screwdriverSound");
+    this.screwdriverSound.addMarker({ name: "turn", start: 0, duration: 2.5 });
   }
 
   unlock() {
@@ -28,41 +31,26 @@ class AudioManager {
   }
 
   setRoom(room) {
-    this.runAfterUnlock(() => {
-      if (this.room === room) return;
-      this.stopBackground();
-      this.room = room;
-
-      const sounds = {
-        감금실: { tones: [110, 165], type: "sine", volume: 0.04 },
-        정비실: { tones: [147, 220], type: "triangle", volume: 0.03 },
-        통제실: { tones: [196, 294], type: "square", volume: 0.018 },
-      };
-      const sound = sounds[room];
-      if (!sound) return;
-
-      sound.tones.forEach((frequency, index) => {
-        const oscillator = this.context.createOscillator();
-        const gain = this.context.createGain();
-        oscillator.type = sound.type;
-        oscillator.frequency.value = frequency;
-        oscillator.detune.value = index * 5;
-        gain.gain.setValueAtTime(0.0001, this.context.currentTime);
-        gain.gain.linearRampToValueAtTime(sound.volume, this.context.currentTime + 0.8);
-        oscillator.connect(gain).connect(this.context.destination);
-        oscillator.start();
-        this.background.push({ oscillator, gain });
-      });
-    });
+    if (!this.soundManager || this.room === room) return;
+    this.stopBackground();
+    const sounds = {
+      감금실: { key: "prisonAmbience", volume: 0.5 },
+      정비실: { key: "maintenanceAmbience", volume: 0.8 },
+      통제실: { key: "controlAmbience", volume: 1 },
+    };
+    const sound = sounds[room];
+    if (!sound) return;
+    this.room = room;
+    this.background = this.soundManager.add(sound.key, { loop: true, volume: sound.volume });
+    this.background.play();
   }
 
   stopBackground() {
-    if (!this.context) return;
-    this.background.forEach(({ oscillator, gain }) => {
-      gain.gain.linearRampToValueAtTime(0.0001, this.context.currentTime + 0.2);
-      oscillator.stop(this.context.currentTime + 0.22);
-    });
-    this.background = [];
+    if (this.background) {
+      this.background.stop();
+      this.background.destroy();
+      this.background = null;
+    }
     this.room = null;
   }
 
@@ -73,9 +61,17 @@ class AudioManager {
       metal: "metalSound",
       unlock: "unlockSound",
       screwdriver: "screwdriverSound",
+      flashlight: "flashlightSound",
+      powerRestore: "powerRestoreSound",
+      doorOpen: "doorOpenSound",
     };
     const soundKey = soundKeys[type];
     if (soundKey && this.soundManager) {
+      if (type === "screwdriver") {
+        this.screwdriverSound.play("turn", { volume: 1 });
+        return;
+      }
+      this.soundManager.stopByKey(soundKey);
       this.soundManager.play(soundKey, { volume: 1 });
       return;
     }

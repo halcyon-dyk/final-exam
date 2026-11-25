@@ -19,12 +19,13 @@ class CodePuzzle {
 
     for (let digit = 1; digit <= 9; digit += 1) {
       const index = digit - 1;
-      this.createButton(width / 2 - 70 + (index % 3) * 70, height / 2 - 35 + Math.floor(index / 3) * 55, String(digit), () => this.append(String(digit)));
+      this.createButton(width / 2 - 70 + (index % 3) * 70, height / 2 - 55 + Math.floor(index / 3) * 45, String(digit), () => this.append(String(digit)));
     }
     this.createButton(width / 2, height / 2 + 130 - 45, "0", () => this.append("0"));
     this.createButton(width / 2 - 105, height / 2 + 130 - 45, "삭제", () => this.remove(), 64);
     this.createButton(width / 2 + 105, height / 2 + 130 - 45, "확인", () => this.check(), 64);
     this.createButton(width / 2 + 135, height / 2 - 145, "닫기", () => this.destroy(), 64);
+    window.fitDialog(this.scene, this.elements);
   }
 
   createButton(x, y, label, onClick, buttonWidth = 54) {

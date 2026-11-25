@@ -91,8 +91,8 @@ class PrisonRoom {
     object.on("pointerover", () => tag.setAlpha(1));
     object.on("pointerout", () => tag.setAlpha(0.72));
     object.on("pointerdown", () => {
-      onInspect?.();
       this.panel.show(label, message);
+      onInspect?.();
     });
   }
 }

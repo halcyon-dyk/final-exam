@@ -26,6 +26,7 @@ class InvestigationPanel {
     this.closeButton.on("pointerdown", () => this.hide());
     this.elements = [this.background, this.title, this.message, this.closeButton, this.closeLabel];
     this.elements.forEach((element) => element.setDepth(100));
+    window.fitDialog(scene, this.elements);
     this.hide();
   }
 

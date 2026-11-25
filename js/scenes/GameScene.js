@@ -7,14 +7,22 @@ class GameScene extends Phaser.Scene {
     this.load.image("prisonBackground", "js/images/%EA%B0%90%EA%B8%88%EC%8B%A4.png");
     this.load.image("maintenanceBackground", "js/images/%EC%A0%95%EB%B9%84%EC%8B%A4-%EC%A0%81%EC%9A%A9.png");
     this.load.image("controlBackground", "js/images/%ED%86%B5%EC%A0%9C%EC%8B%A4-%EC%A0%81%EC%9A%A9.png");
-    this.load.audio("scribbleSound", "js/audio/effects/scribble.wav");
-    this.load.audio("paperSound", "js/audio/effects/paper.wav");
-    this.load.audio("metalSound", "js/audio/effects/metal.wav");
-    this.load.audio("unlockSound", "js/audio/effects/unlock.wav");
-    this.load.audio("screwdriverSound", "js/audio/effects/screwdriver.wav");
+    this.load.audio("scribbleSound", "js/audio/effects/pencil-writing.mp3");
+    this.load.audio("paperSound", "js/audio/effects/paper-rustle.mp3");
+    this.load.audio("metalSound", "js/audio/effects/metal-knock.mp3");
+    this.load.audio("unlockSound", "js/audio/effects/padlock-open.mp3");
+    this.load.audio("screwdriverSound", "js/audio/effects/ratchet-screwdriver.mp3");
+    this.load.audio("flashlightSound", "js/audio/effects/flashlight-switch.mp3");
+    this.load.audio("powerRestoreSound", "js/audio/effects/power-restore.mp3");
+    this.load.audio("doorOpenSound", "js/audio/effects/security-door-open.mp3");
+    this.load.audio("prisonAmbience", "js/audio/background/prison-drone.mp3");
+    this.load.audio("maintenanceAmbience", "js/audio/background/maintenance-machinery.mp3");
+    this.load.audio("controlAmbience", "js/audio/background/control-computers.mp3");
   }
 
   create() {
+    window.watchResize(this);
+    this.pausedForMenu = false;
     const { width, height } = this.scale;
     this.state = window.gameState;
     this.layout = new Layout(width, height);
@@ -48,6 +56,24 @@ class GameScene extends Phaser.Scene {
     this.createRoom();
 
     this.createToolbar(width);
+    this.createControl(62, 112, 88, "일시정지", "14px", () => this.showMenu(false));
+    this.createControl(158, 112, 88, "도움말", "14px", () => this.showMenu(true));
+  }
+
+  showMenu(help) {
+    if (this.pausedForMenu) return;
+    this.pausedForMenu = true;
+    const {width, height} = this.scale;
+    const elements = [];
+    const add = e => { e.setDepth(500); elements.push(e); return e; };
+    add(this.add.rectangle(width / 2, height / 2, 350, 280, 0x30363a));
+    add(this.add.text(width / 2, height / 2 - 100, help ? "사물 조사 → 도구 선택 → 사용\n조합: 도구 선택 → 조합 → 다른 도구\n메모장과 힌트에서 단서를 확인하세요.\n이 화면에서는 시간이 멈춥니다." : "일시정지\n시간이 멈췄습니다.", {fontSize:"18px",color:"#d7d2c8",align:"center",wordWrap:{width:320}}).setOrigin(0.5,0));
+    const toggle = add(this.add.text(width / 2, height / 2 + 55, "", {fontSize:"18px",color:"#d79a32"}).setOrigin(0.5).setInteractive({useHandCursor:true}));
+    const refresh = () => toggle.setText(`깜빡임: ${localStorage.getItem("escapeDisableFlash") === "true" ? "꺼짐" : "켜짐"}`);
+    refresh();
+    toggle.on("pointerdown", () => {localStorage.setItem("escapeDisableFlash", String(localStorage.getItem("escapeDisableFlash") !== "true"));refresh();});
+    add(this.add.text(width / 2, height / 2 + 105, "계속하기", {fontSize:"22px",color:"#d7d2c8"}).setOrigin(0.5).setInteractive({useHandCursor:true})).on("pointerdown", () => {elements.forEach(e=>e.destroy());this.pausedForMenu=false;});
+    window.fitDialog(this,elements);
   }
 
   createRoom() {
@@ -107,7 +133,7 @@ class GameScene extends Phaser.Scene {
       this.state.removeItem("배터리");
       this.state.addItem("손전등");
       this.state.selectItem("손전등");
-      this.feedback.play("손전등이 완성되었다.");
+      this.feedback.play("손전등이 완성되었다.", "flashlight");
       this.inventoryPanel.render();
       return;
     }

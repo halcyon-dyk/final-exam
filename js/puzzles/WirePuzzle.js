@@ -21,6 +21,7 @@ class WirePuzzle {
     ["1", "2", "3"].forEach((terminal, index) => this.createButton(width / 2 + 100, height / 2 - 35 + index * 45, terminal, () => this.connect(terminal)));
     this.createButton(width / 2 - 60, height / 2 + 105, "닫기", () => this.destroy(), 90);
     this.createButton(width / 2 + 60, height / 2 + 105, "확인", () => this.check(), 90);
+    window.fitDialog(this.scene, this.elements);
   }
 
   createButton(x, y, label, onClick, buttonWidth = 56) {

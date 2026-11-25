@@ -32,7 +32,7 @@ class MaintenanceRoom {
   }
 
   collectPart(part) {
-    if (this.state.hasItem(part)) return;
+    if (this.state.hasItem(part) || this.state.hasItem("손전등")) return;
     this.state.addItem(part);
     if (this.scene.inventoryPanel.background.visible) {
       this.scene.inventoryPanel.render();
@@ -47,14 +47,14 @@ class MaintenanceRoom {
     this.state.solvePuzzle("배선도");
     this.state.solvePuzzle("통제실 통로");
     this.state.addNote("숨겨진 배선도: A→2, B→3, C→1");
-    this.feedback.play("숨겨진 배선도가 드러나 통제실 통로가 열렸다.");
+    this.feedback.play("숨겨진 배선도가 드러나 통제실 통로가 열렸다.", "flashlight");
   }
 
   createObject(x, y, width, height, label, message, onInspect) {
     const object = this.scene.add.rectangle(x, y, width, height, 0xd79a32, 0.01).setInteractive({ useHandCursor: true });
     object.on("pointerdown", () => {
-      onInspect?.();
       this.panel.show(label, message);
+      onInspect?.();
     });
   }
 }

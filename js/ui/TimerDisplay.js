@@ -7,7 +7,7 @@ class TimerDisplay {
     const { width } = scene.scale;
 
     this.label = scene.add.text(width - 24, 20, "", {
-      color: "#1f2937",
+      color: "#d7d2c8",
       fontFamily: "sans-serif",
       fontSize: "24px",
     }).setOrigin(1, 0).setDepth(20);
@@ -21,7 +21,7 @@ class TimerDisplay {
   }
 
   tick() {
-    if (document.hidden) return;
+    if (document.hidden || this.scene.pausedForMenu) return;
     if (this.state.timeRemaining > 0) {
       this.state.timeRemaining -= 1;
       this.state.save();

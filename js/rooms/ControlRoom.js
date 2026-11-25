@@ -41,7 +41,7 @@ class ControlRoom {
     this.panel.hide();
     new WirePuzzle(this.scene, () => {
       this.state.solvePuzzle("배선");
-      this.feedback.play("전원이 복구되었다.");
+      this.feedback.play("전원이 복구되었다.", "powerRestore");
     });
   }
 
@@ -54,13 +54,13 @@ class ControlRoom {
       this.scene.scene.start("ResultScene", { success: true });
       return;
     }
-    if (!this.state.isSolved("배선") || this.state.notes.length < 4) {
+    if (!this.state.isSolved("배선") || !this.state.notes.includes("해제 순서: 통제실 → 감금실 → 정비실") || !this.state.notes.includes("시설 기호: 감금실=달, 정비실=톱니, 통제실=눈")) {
       this.panel.show("비상문", "전원을 복구하고 실험 기록과 시설 지도를 조사해야 한다.");
       return;
     }
     new SequencePuzzle(this.scene, ["눈", "달", "톱니"], () => {
       this.state.solvePuzzle("비상문");
-      this.feedback.play("비상문이 열렸다.");
+      this.feedback.play("비상문이 열렸다.", "doorOpen");
       this.scene.time.delayedCall(300, () => this.scene.scene.restart());
     });
   }
@@ -68,8 +68,8 @@ class ControlRoom {
   createObject(x, y, width, height, label, message, onInspect, opensDialog = false) {
     const object = this.scene.add.rectangle(x, y, width, height, 0xd79a32, 0.01).setInteractive({ useHandCursor: true });
     object.on("pointerdown", () => {
-      onInspect?.();
       if (!opensDialog) this.panel.show(label, message);
+      onInspect?.();
     });
   }
 }

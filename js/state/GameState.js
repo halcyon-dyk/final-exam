@@ -66,7 +66,15 @@ class GameState {
     }));
   }
 
+  hasActiveSave() {
+    try {
+      const saved = JSON.parse(localStorage.getItem("escapeGameState"));
+      return !!saved && saved.timeRemaining > 0 && ["감금실", "정비실", "통제실"].includes(saved.currentRoom) && Array.isArray(saved.items) && Array.isArray(saved.notes) && typeof saved.solvedPuzzles === "object";
+    } catch { return false; }
+  }
+
   load() {
+    if (!this.hasActiveSave()) return false;
     const saved = localStorage.getItem("escapeGameState");
     if (!saved) return false;
     Object.assign(this, JSON.parse(saved));
