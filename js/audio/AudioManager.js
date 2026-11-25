@@ -11,6 +11,10 @@ class AudioManager {
     this.soundManager = soundManager;
     this.screwdriverSound = soundManager.add("screwdriverSound");
     this.screwdriverSound.addMarker({ name: "turn", start: 0, duration: 2.5 });
+    this.boltsSound = soundManager.add("boltsSound");
+    this.boltsSound.addMarker({ name: "inspect", start: 0, duration: 1.8 });
+    this.wallSound = soundManager.add("wallSound");
+    this.wallSound.addMarker({ name: "inspect", start: 0, duration: 1.2 });
   }
 
   unlock() {
@@ -55,6 +59,12 @@ class AudioManager {
   }
 
   playEffect(type) {
+    if (this.soundManager && (type === "bolts" || type === "wall")) {
+      const sound = type === "bolts" ? this.boltsSound : this.wallSound;
+      sound.stop();
+      sound.play("inspect", { volume: type === "bolts" ? 0.85 : 0.55 });
+      return;
+    }
     const soundKeys = {
       scribble: "scribbleSound",
       paper: "paperSound",

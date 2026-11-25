@@ -74,8 +74,9 @@ class PrisonRoom {
       return;
     }
     this.state.solvePuzzle("정비실 통로");
+    this.panel.hide();
     window.audioManager.playEffect("screwdriver");
-    this.feedback.play("환풍구 덮개가 제거되어 정비실 통로가 열렸다.");
+    this.feedback.play("환풍구 덮개가 제거되었다.\n정비실로 가는 통로가 열렸다.", "feedback", 5000);
   }
 
   createObject(x, y, width, height, label, message, onInspect) {
@@ -86,10 +87,13 @@ class PrisonRoom {
       fontFamily: "sans-serif",
       fontSize: "16px",
       padding: { left: 6, right: 6, top: 3, bottom: 3 },
-    }).setOrigin(0.5, 1).setAlpha(0.72);
+    }).setOrigin(0.5, 1).setAlpha(0.72).setDepth(1).setInteractive({ useHandCursor: true });
 
     object.on("pointerover", () => tag.setAlpha(1));
     object.on("pointerout", () => tag.setAlpha(0.72));
+    tag.on("pointerover", () => tag.setAlpha(1));
+    tag.on("pointerout", () => tag.setAlpha(0.72));
+    tag.on("pointerdown", () => object.emit("pointerdown"));
     object.on("pointerdown", () => {
       this.panel.show(label, message);
       onInspect?.();

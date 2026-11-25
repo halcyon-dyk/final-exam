@@ -18,3 +18,13 @@
 - CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
 - 배포할 때 이 출처 파일을 함께 포함하세요. 드라이버 음원은 theshaggyfreak의 작품이며, 게임 내 재생 구간만 제한했습니다.
 - 기존 이름의 WAV 파일은 이전 합성음이며 현재 게임에서는 사용하지 않습니다.
+
+## 정비실 사물 조사 효과음 (2026-11-25)
+
+| 게임 파일 | 원본 제목 / 저작자 | 원본 페이지 | 라이선스 |
+| --- | --- | --- | --- |
+| bolts-rattle.mp3 | screwnuts.wav / vibe_crc | https://freesound.org/people/vibe_crc/sounds/59882/ | CC0 1.0 |
+| wall-knock.mp3 | 3. Hammer knock on wall.wav / 15F_Panska_SnajdarFilip | https://freesound.org/people/15F_Panska_SnajdarFilip/sounds/461428/ | CC0 1.0 |
+
+- 위 두 파일은 공개 LQ MP3 미리듣기 녹음이며 파일 자체는 편집하지 않았다. 볼트는 처음 1.8초(음량 0.85), 벽은 처음 1.2초(음량 0.55)를 재생한다.
+- 작업일지는 기존 paper-rustle.mp3, 손전등 본체는 flashlight-switch.mp3, 공구함은 metal-knock.mp3를 사용한다. 손전등을 선택한 상태로 벽면을 누르면 두드림 대신 flashlight-switch.mp3가 재생된다.

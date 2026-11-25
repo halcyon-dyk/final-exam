@@ -78,6 +78,10 @@ class GameState {
     const saved = localStorage.getItem("escapeGameState");
     if (!saved) return false;
     Object.assign(this, JSON.parse(saved));
+    if (this.hasItem("배터리") || this.hasItem("손전등") || this.isSolved("배선도")) {
+      this.solvedPuzzles["공구함"] = true;
+      this.save();
+    }
     this.selectedItem = null;
     this.combiningItem = null;
     return true;

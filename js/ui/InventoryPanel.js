@@ -6,14 +6,14 @@ class InventoryPanel {
     this.onItemSelected = onItemSelected;
     const { x, y, width, height } = layout.panel;
 
-    this.background = scene.add.rectangle(x + width / 2, y + height / 2, width, height, 0xffffff, 1);
+    this.background = scene.add.rectangle(x + width / 2, y + height / 2, width, height, 0x30363a, 0.65).setStrokeStyle(1, 0xd79a32, 0.4);
     this.title = scene.add.text(x + 16, y + 16, "보관함", {
-      color: "#1f2937",
+      color: "#d79a32",
       fontFamily: "sans-serif",
       fontSize: "22px",
     });
     this.contents = scene.add.text(x + 16, y + 52, "", {
-      color: "#374151",
+      color: "#d7d2c8",
       fontFamily: "sans-serif",
       fontSize: "18px",
       lineSpacing: 10,
@@ -56,7 +56,7 @@ class InventoryPanel {
     this.state.items.forEach((item, index) => {
       const prefix = this.state.selectedItem === item ? "▶ " : "• ";
       const itemText = this.scene.add.text(this.contents.x, this.contents.y + index * 30, `${prefix}${item}`, {
-        color: "#374151",
+        color: this.state.selectedItem === item ? "#d79a32" : "#d7d2c8",
         fontFamily: "sans-serif",
         fontSize: "18px",
       }).setInteractive({ useHandCursor: true });

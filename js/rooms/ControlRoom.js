@@ -9,9 +9,9 @@ class ControlRoom {
   create() {
     const stage = this.scene.layout.stage;
     this.createBackground(stage);
-    this.createObject(stage.x + stage.width * 0.17, stage.y + stage.height * 0.25, stage.width * 0.22, stage.height * 0.34, "배선도", "연결 관계는 A→2, B→3, C→1이다.");
+    this.createObject(stage.x + stage.width * 0.17, stage.y + stage.height * 0.235, stage.width * 0.22, stage.height * 0.37, "배선도", "연결 관계는 A→2, B→3, C→1이다.");
     this.createObject(stage.x + stage.width * 0.55, stage.y + stage.height * 0.52, stage.width * 0.4, stage.height * 0.48, "전선", "배선도를 보고 연결해야 한다.", () => this.openWirePuzzle(), true);
-    this.createObject(stage.x + stage.width * 0.18, stage.y + stage.height * 0.58, stage.width * 0.28, stage.height * 0.25, "실험 기록", "통제실 → 감금실 → 정비실 순서로 해제하라.", () => this.state.addNote("해제 순서: 통제실 → 감금실 → 정비실"));
+    this.createObject(stage.x + stage.width * 0.18, stage.y + stage.height * 0.57, stage.width * 0.28, stage.height * 0.27, "실험 기록", "통제실 → 감금실 → 정비실 순서로 해제하라.", () => this.state.addNote("해제 순서: 통제실 → 감금실 → 정비실"));
     this.createObject(stage.x + stage.width * 0.7, stage.y + stage.height * 0.78, stage.width * 0.42, stage.height * 0.4, "시설 지도", "감금실=달, 정비실=톱니, 통제실=눈", () => this.state.addNote("시설 기호: 감금실=달, 정비실=톱니, 통제실=눈"));
     this.createObject(stage.x + stage.width * 0.9, stage.y + stage.height * 0.36, stage.width * 0.2, stage.height * 0.55, this.state.isSolved("비상문") ? "열린 비상문" : "비상문", this.doorMessage(), () => this.openDoor());
   }

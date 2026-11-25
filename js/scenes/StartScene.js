@@ -4,12 +4,15 @@ class StartScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("startBackground", "js/images/starting%20page.png");
+    this.load.image("startBackground", "js/images/start-background.png");
   }
 
   create() {
-    window.watchResize(this);
     const { width, height } = this.scale;
+    if (!this.textures.exists("startBackground")) {
+      this.add.text(width / 2, height / 2, "시작 화면 이미지를 불러오지 못했습니다.\n새로고침해 다시 시도해 주세요.", {fontFamily:"sans-serif",fontSize:"20px",color:"#d7d2c8",backgroundColor:"#111315",align:"center",wordWrap:{width:width-32}}).setOrigin(0.5);
+      return;
+    }
     this.add.image(width / 2, height / 2, "startBackground").setDisplaySize(width, height);
 
     this.addButtonArea(width / 2, height * 0.526, width * 0.23, height * 0.082, () => {
@@ -29,6 +32,12 @@ class StartScene extends Phaser.Scene {
     } else {
       this.add.rectangle(width / 2, height * 0.631, width * 0.23, height * 0.082, 0x111315, 0.65);
     }
+    const placements = this.children.list.map(object => ({object, x:object.x/width, y:object.y/height, w:object.displayWidth/width, h:object.displayHeight/height}));
+    const resize = ({width, height}) => {
+      placements.forEach(({object,x,y,w,h}) => object.setPosition(x*width,y*height).setDisplaySize(w*width,h*height));
+    };
+    this.scale.on("resize", resize);
+    this.events.once("shutdown", () => this.scale.off("resize", resize));
   }
 
   addButtonArea(x, y, width, height, onClick) {

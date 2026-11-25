@@ -3,19 +3,29 @@ class Feedback {
     this.scene = scene;
   }
 
-  play(message, soundType = "feedback") {
+  play(message, soundType = "feedback", duration = 1200) {
     const { width, height } = this.scene.scale;
     if (localStorage.getItem("escapeDisableFlash") !== "true") this.scene.cameras.main.flash(250, 255, 236, 153);
-    const cue = this.scene.add.text(width / 2, height * 0.8, `🔊 ${message}`, {
-      color: "#1f2937",
+    if (this.cue?.active) {
+      this.scene.tweens.killTweensOf(this.cue);
+      this.cue.destroy();
+    }
+    const cue = this.scene.add.text(width / 2, height - 88, message, {
+      color: "#d7d2c8",
+      backgroundColor: "#111315",
       fontFamily: "sans-serif",
-      fontSize: "20px",
-    }).setOrigin(0.5).setDepth(100);
+      fontSize: "22px",
+      align: "center",
+      lineSpacing: 6,
+      padding: { left: 16, right: 16, top: 12, bottom: 12 },
+      wordWrap: { width: Math.min(width - 64, 560), useAdvancedWrap: true },
+    }).setOrigin(0.5, 1).setDepth(150);
+    this.cue = cue;
 
     this.scene.tweens.add({
       targets: cue,
       alpha: 0,
-      delay: 1200,
+      delay: duration,
       duration: 500,
       onComplete: () => cue.destroy(),
     });

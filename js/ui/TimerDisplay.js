@@ -6,10 +6,11 @@ class TimerDisplay {
     this.finished = false;
     const { width } = scene.scale;
 
-    this.label = scene.add.text(width - 24, 20, "", {
-      color: "#d7d2c8",
+    scene.add.text(width - 24, 12, "봉쇄까지", { color: "#d7d2c8", fontFamily: "sans-serif", fontSize: "18px" }).setOrigin(1, 0).setDepth(20);
+    this.label = scene.add.text(width - 24, 34, "", {
+      color: "#d79a32",
       fontFamily: "sans-serif",
-      fontSize: "24px",
+      fontSize: "22px",
     }).setOrigin(1, 0).setDepth(20);
     this.update();
 
