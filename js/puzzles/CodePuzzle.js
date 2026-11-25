@@ -62,6 +62,7 @@ class CodePuzzle {
     this.input = "";
     this.updateDisplay();
     this.message.setText("비밀번호가 맞지 않습니다.");
+    window.audioManager.playEffect("error");
   }
 
   add(element) {

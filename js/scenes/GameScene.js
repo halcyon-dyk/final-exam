@@ -7,12 +7,19 @@ class GameScene extends Phaser.Scene {
     this.load.image("prisonBackground", "js/images/%EA%B0%90%EA%B8%88%EC%8B%A4.png");
     this.load.image("maintenanceBackground", "js/images/%EC%A0%95%EB%B9%84%EC%8B%A4-%EC%A0%81%EC%9A%A9.png");
     this.load.image("controlBackground", "js/images/%ED%86%B5%EC%A0%9C%EC%8B%A4-%EC%A0%81%EC%9A%A9.png");
+    this.load.audio("scribbleSound", "js/audio/effects/scribble.wav");
+    this.load.audio("paperSound", "js/audio/effects/paper.wav");
+    this.load.audio("metalSound", "js/audio/effects/metal.wav");
+    this.load.audio("unlockSound", "js/audio/effects/unlock.wav");
+    this.load.audio("screwdriverSound", "js/audio/effects/screwdriver.wav");
   }
 
   create() {
     const { width, height } = this.scale;
     this.state = window.gameState;
     this.layout = new Layout(width, height);
+    window.audioManager.setSoundManager(this.sound);
+    window.audioManager.setRoom(this.state.currentRoom);
 
     const isDarkRoom = ["감금실", "정비실", "통제실"].includes(this.state.currentRoom);
     this.cameras.main.setBackgroundColor(isDarkRoom ? "#111315" : "#f3f6fb");
@@ -25,12 +32,12 @@ class GameScene extends Phaser.Scene {
       .setOrigin(0, 0.5)
       .setDepth(20)
       .setInteractive({ useHandCursor: true });
-    this.previousArrow.on("pointerdown", () => this.moveToPreviousRoom());
+    this.previousArrow.on("pointerdown", () => { window.audioManager.playEffect("click"); this.moveToPreviousRoom(); });
     this.nextArrow = this.add.text(width - 24, height - 48, "▶", { color: isDarkRoom ? "#d7d2c8" : "#374151", fontSize: "32px" })
       .setOrigin(1, 0.5)
       .setDepth(20)
       .setInteractive({ useHandCursor: true });
-    this.nextArrow.on("pointerdown", () => this.moveToNextRoom());
+    this.nextArrow.on("pointerdown", () => { window.audioManager.playEffect("click"); this.moveToNextRoom(); });
 
     this.investigationPanel = new InvestigationPanel(this);
     this.inventoryPanel = new InventoryPanel(this, this.state, this.layout, (item) => this.finishCombine(item));
@@ -133,7 +140,10 @@ class GameScene extends Phaser.Scene {
       fontFamily: "sans-serif",
       fontSize,
     }).setOrigin(0.5);
-    control.on("pointerdown", onClick);
+    control.on("pointerdown", () => {
+      window.audioManager.playEffect("click");
+      onClick();
+    });
   }
 }
 

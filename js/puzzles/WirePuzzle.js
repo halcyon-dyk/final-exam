@@ -58,6 +58,7 @@ class WirePuzzle {
       return;
     }
     this.message.setText("연결이 맞지 않습니다. 수정한 뒤 다시 확인하세요.");
+    window.audioManager.playEffect("error");
   }
 
   add(element) { element.setDepth(200); this.elements.push(element); }

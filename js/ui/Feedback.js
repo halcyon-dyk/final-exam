@@ -23,6 +23,10 @@ class Feedback {
   }
 
   playWarningTone() {
+    if (window.audioManager) {
+      window.audioManager.playEffect("feedback");
+      return;
+    }
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (!AudioContext) {
       return;

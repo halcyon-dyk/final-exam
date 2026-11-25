@@ -31,6 +31,7 @@ class SequencePuzzle {
     if (symbol !== this.expected[this.input.length]) {
       this.input = [];
       this.message.setText("순서가 맞지 않습니다.");
+      window.audioManager.playEffect("error");
       this.update();
       return;
     }

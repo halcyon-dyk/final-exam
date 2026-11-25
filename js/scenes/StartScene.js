@@ -12,6 +12,8 @@ class StartScene extends Phaser.Scene {
     this.add.image(width / 2, height / 2, "startBackground").setDisplaySize(width, height);
 
     this.addButtonArea(width / 2, height * 0.526, width * 0.23, height * 0.082, () => {
+      window.audioManager.setRoom("감금실");
+      window.audioManager.playEffect("click");
       window.gameState.reset();
       window.gameState.save();
       this.scene.start("GameScene");
@@ -20,6 +22,8 @@ class StartScene extends Phaser.Scene {
     if (localStorage.getItem("escapeGameState") !== null) {
       this.addButtonArea(width / 2, height * 0.631, width * 0.23, height * 0.082, () => {
         window.gameState.load();
+        window.audioManager.setRoom(window.gameState.currentRoom);
+        window.audioManager.playEffect("click");
         this.scene.start("GameScene");
       });
     }

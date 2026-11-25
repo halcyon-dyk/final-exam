@@ -11,9 +11,11 @@ class PrisonRoom {
 
     this.createBackground(stage);
     this.createObject(stage.x + stage.width * 0.67, stage.y + stage.height * 0.28, stage.width * 0.2, stage.height * 0.24, "벽 낙서", "삼각형 → 원 → 사각형 기호가 표시되어 있다.", () => {
+      window.audioManager.playEffect("scribble");
       this.state.addNote("상자 기호 순서: 삼각형 → 원 → 사각형");
     });
     this.createObject(stage.x + stage.width * 0.5, stage.y + stage.height * 0.78, stage.width * 0.16, stage.height * 0.14, "바닥 쪽지", "원=2, 사각형=7, 삼각형=4라고 적혀 있다.", () => {
+      window.audioManager.playEffect("paper");
       this.state.addNote("기호 값: 원=2, 사각형=7, 삼각형=4");
     });
 
@@ -34,12 +36,14 @@ class PrisonRoom {
     }
 
     this.createObject(stage.x + stage.width * 0.77, stage.y + stage.height * 0.62, stage.width * 0.25, stage.height * 0.4, "잠긴 상자", "비밀번호를 입력해야 열 수 있다.", () => {
+      window.audioManager.playEffect("metal");
       if (this.state.notes.length < 2) {
         this.panel.show("상자", "비밀번호 단서를 먼저 찾아야 한다.");
         return;
       }
       new CodePuzzle(this.scene, "427", () => {
         this.state.solvePuzzle("상자");
+        window.audioManager.playEffect("unlock");
         this.feedback.play("상자가 열렸다.");
         this.scene.time.delayedCall(300, () => this.scene.scene.restart());
       });
@@ -70,6 +74,7 @@ class PrisonRoom {
       return;
     }
     this.state.solvePuzzle("정비실 통로");
+    window.audioManager.playEffect("screwdriver");
     this.feedback.play("환풍구 덮개가 제거되어 정비실 통로가 열렸다.");
   }
 
