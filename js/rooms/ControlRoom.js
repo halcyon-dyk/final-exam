@@ -17,23 +17,44 @@ class ControlRoom {
   }
 
   createBackground(stage) {
-    const texture = this.scene.textures.get("controlBackground");
-    if (!texture.has("roomView")) {
-      const source = texture.getSourceImage();
-      const roomLeft = Math.round(source.width * (78 / 1366));
-      const roomTop = Math.round(source.height * (164 / 768));
-      const roomWidth = Math.round(source.width * (840 / 1366));
-      texture.add("roomView", 0, roomLeft, roomTop, roomWidth, source.height - roomTop);
+    for (const key of ["controlBackground", "controlDoorOpen"]) {
+      const texture = this.scene.textures.get(key);
+      if (!texture.has("roomView")) {
+        const source = texture.getSourceImage();
+        const roomLeft = Math.round(source.width * (78 / 1366));
+        const roomTop = Math.round(source.height * (164 / 768));
+        const roomWidth = Math.round(source.width * (840 / 1366));
+        texture.add("roomView", 0, roomLeft, roomTop, roomWidth, source.height - roomTop);
+      }
     }
-    this.scene.add.image(
+    this.background = this.scene.add.image(
       stage.x + stage.width / 2,
       stage.y + stage.height / 2,
       "controlBackground",
       "roomView",
     ).setDisplaySize(stage.width, stage.height);
+    this.monitorShade = this.scene.add.rectangle(stage.x + stage.width * 0.51, stage.y + stage.height * 0.235, stage.width * 0.35, stage.height * 0.28, 0x111315, 0.65);
+    this.scene.add.rectangle(stage.x + stage.width * 0.55, stage.y + stage.height * 0.075, 128, 32, 0x30363a).setDepth(1);
+    this.powerLamp = this.scene.add.circle(stage.x + stage.width * 0.55 - 48, stage.y + stage.height * 0.075, 5, 0xb94343).setDepth(1);
+    this.powerLabel = this.scene.add.text(stage.x + stage.width * 0.55 + 10, stage.y + stage.height * 0.075, "", { color: "#d7d2c8", fontSize: "18px", fontFamily: "sans-serif" }).setOrigin(0.5).setDepth(1);
+    this.exitLabel = this.scene.add.text(stage.x + stage.width * 0.86, stage.y + stage.height * 0.25, "탈출구", { color: "#d7d2c8", backgroundColor: "#30363a", fontSize: "18px", padding: { left: 6, right: 6, top: 3, bottom: 3 } }).setOrigin(0.5).setDepth(1).setInteractive({ useHandCursor: true });
+    this.exitLabel.on("pointerdown", () => this.openDoor());
+    this.refreshVisuals();
+  }
+
+  refreshVisuals() {
+    if (!this.background) return;
+    const powered = this.state.isSolved("배선");
+    const open = this.state.isSolved("비상문");
+    this.background.setTexture(open ? "controlDoorOpen" : "controlBackground", "roomView").setDisplaySize(this.scene.layout.stage.width, this.scene.layout.stage.height);
+    this.monitorShade.setVisible(!powered);
+    this.powerLamp.setFillStyle(powered ? 0xd79a32 : 0xb94343);
+    this.powerLabel.setText(powered ? "전원 복구" : "전원 차단");
+    this.exitLabel.setVisible(open);
   }
 
   openWirePuzzle() {
+    window.audioManager.playEffect("cable");
     if (this.state.isSolved("배선")) {
       this.panel.show("전선", "배선이 이미 연결되어 있다.");
       return;
@@ -41,6 +62,7 @@ class ControlRoom {
     this.panel.hide();
     new WirePuzzle(this.scene, () => {
       this.state.solvePuzzle("배선");
+      this.refreshVisuals();
       this.feedback.play("전원이 복구되었다.", "powerRestore");
     });
   }
@@ -55,19 +77,24 @@ class ControlRoom {
       return;
     }
     if (!this.state.isSolved("배선") || !this.state.notes.includes("해제 순서: 통제실 → 감금실 → 정비실") || !this.state.notes.includes("시설 기호: 감금실=달, 정비실=톱니, 통제실=눈")) {
+      window.audioManager.playEffect("metal");
       this.panel.show("비상문", "전원을 복구하고 실험 기록과 시설 지도를 조사해야 한다.");
       return;
     }
-    new SequencePuzzle(this.scene, ["눈", "달", "톱니"], () => {
+    window.audioManager.playEffect("click");
+    this.panel.hide();
+    const puzzle = new SequencePuzzle(this.scene, ["눈", "달", "톱니"], () => {
       this.state.solvePuzzle("비상문");
+      this.refreshVisuals();
       this.feedback.play("비상문이 열렸다.", "doorOpen");
-      this.scene.time.delayedCall(300, () => this.scene.scene.restart());
     });
+    puzzle.inputSound = "click";
   }
 
   createObject(x, y, width, height, label, message, onInspect, opensDialog = false) {
     const object = this.scene.add.rectangle(x, y, width, height, 0xd79a32, 0.01).setInteractive({ useHandCursor: true });
     object.on("pointerdown", () => {
+      if (["배선도", "실험 기록", "시설 지도"].includes(label)) window.audioManager.playEffect("paper");
       if (!opensDialog) this.panel.show(label, message);
       onInspect?.();
     });

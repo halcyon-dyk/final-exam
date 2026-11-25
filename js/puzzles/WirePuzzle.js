@@ -33,16 +33,19 @@ class WirePuzzle {
   }
 
   selectWire(wire) {
+    window.audioManager.playEffect("click");
     this.selectedWire = wire;
     this.message.setText(`${wire} 전선을 선택했습니다. 단자를 선택하세요.`);
   }
 
   connect(terminal) {
     if (!this.selectedWire) {
+      window.audioManager.playEffect("error");
       this.message.setText("먼저 전선을 선택하세요.");
       return;
     }
     this.connections[this.selectedWire] = terminal;
+    window.audioManager.playEffect("cable");
     this.selectedWire = null;
     this.updateDisplay();
     this.message.setText("연결을 바꾸려면 전선을 다시 선택하세요.");

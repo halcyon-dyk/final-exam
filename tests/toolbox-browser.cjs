@@ -7,19 +7,21 @@ const root = path.resolve(__dirname, '..');
 const reports = [];
 let phaser;
 const harness = `
+const maintenanceCreate = MaintenanceRoom.prototype.create;
+MaintenanceRoom.prototype.create = function(){this.scene.testMaintenance=this;maintenanceCreate.call(this);};
 const originalCreate = GameScene.prototype.create;
 GameScene.prototype.create = async function() {
  originalCreate.call(this);
  try {
   const check = (ok, message) => { if (!ok) throw Error(message); };
   const audioContext = new AudioContext();
-  for(const [file,duration] of [['bolts-rattle',1.8],['wall-knock',1.2]]) {
-   const response=await fetch('/js/audio/effects/'+file+'.mp3');check(response.ok,'audio HTTP '+file);
+  for(const [file,duration] of [['bolts-rattle',1.8],['wall-knock',1.2],['cable-connect',1.2]]) {
+   const response=await fetch('/js/audio/effects/'+file+(file==='cable-connect'?'.wav':'.mp3'));check(response.ok,'audio HTTP '+file);
    const buffer=await audioContext.decodeAudioData(await response.arrayBuffer());
    const samples=buffer.getChannelData(0);let energy=0;
    const length=Math.min(samples.length,Math.floor(buffer.sampleRate*duration));
    for(let i=0;i<length;i++)energy+=samples[i]*samples[i];
-   check(buffer.duration>=duration&&Math.sqrt(energy/length)>0.001,'silent inspection marker '+file);
+   check(buffer.duration>=duration&&Math.sqrt(energy/length)>0.001,'silent inspection marker '+file+' first audible: '+samples.findIndex(value=>Math.abs(value)>0.03)/buffer.sampleRate);
   }
   await audioContext.close();
   const click = label => {
@@ -44,17 +46,38 @@ GameScene.prototype.create = async function() {
   this.memoPanel.contents.emit('pointerdown');check(this.investigationPanel.message.text===this.state.notes[1],'memo full clue');
   this.investigationPanel.hide();click('‹');check(this.memoPanel.page===0,'memo previous');this.memoPanel.hide();
   click('작업일지');this.investigationPanel.hide();check(this.state.notes.length===2,'duplicate note');
-  const room = new MaintenanceRoom(this,this.investigationPanel,this.state,this.feedback);
+  const room = this.testMaintenance;
   click('손전등 본체');check(effectCalls.at(-1)==='flashlight','body sound');this.investigationPanel.hide();
   click('어두운 벽면');check(effectCalls.at(-1)==='wall','wall sound');this.investigationPanel.hide();
   room.openToolbox();check(effectCalls.at(-1)==='metal','toolbox sound');click('□');click('확인');check(!this.state.hasItem('배터리'),'wrong reward');
   click('△');click('닫기');room.openToolbox();
   click('△');click('⬡');click('□');check(!this.state.hasItem('배터리'),'early reward');click('확인');
   check(this.state.hasItem('배터리') && this.state.isSolved('공구함'),'reward missing');
+  check(room.background.texture.key==='maintenanceToolboxOpen','toolbox visual update');
   room.collectPart('손전등 본체');this.state.combiningItem='손전등 본체';this.finishCombine('배터리');
   room.useFlashlight();check(this.state.isSolved('통제실 통로'),'passage locked');
   check(effectCalls.at(-1)==='flashlight','lit wall sound');
   room.openToolbox();check(!this.state.hasItem('배터리'),'duplicate battery');this.investigationPanel.hide();
+  const control = new ControlRoom(this,this.investigationPanel,this.state,this.feedback);
+  control.createBackground=()=>{};
+  const beforeControl=this.children.list.length;control.create();
+  const objects=this.children.list.slice(beforeControl);
+  for(const index of [0,2,3]){objects[index].emit('pointerdown');check(effectCalls.at(-1)==='paper','document sound');this.investigationPanel.hide();}
+  objects[1].emit('pointerdown');check(effectCalls.at(-1)==='cable','inspect wires');
+  click('1');check(effectCalls.at(-1)==='error','terminal without wire');
+  click('A');check(effectCalls.at(-1)==='click','wire select');click('2');check(effectCalls.at(-1)==='cable','wire connect');
+  click('확인');check(effectCalls.at(-1)==='error','wrong wires');
+  click('B');click('3');click('C');click('1');click('확인');check(effectCalls.at(-1)==='powerRestore','power restored');
+  objects[1].emit('pointerdown');check(effectCalls.at(-1)==='cable','no power replay');this.investigationPanel.hide();
+  objects[4].emit('pointerdown');check(effectCalls.at(-1)==='click','door panel');
+  click('달');click('확인');check(effectCalls.at(-1)==='error','wrong door');
+  click('눈');click('달');click('톱니');check(effectCalls.at(-1)==='click','door input');
+  const delayedCall=this.time.delayedCall;this.time.delayedCall=()=>{};
+  click('확인');this.time.delayedCall=delayedCall;check(effectCalls.at(-1)==='doorOpen','door unlocked');
+  const startScene=this.scene.start;let escaped=false;this.scene.start=()=>{escaped=true;};
+  const effectCount=effectCalls.length;objects[4].emit('pointerdown');this.scene.start=startScene;
+  check(escaped&&effectCalls.length===effectCount,'no unlock replay on exit');this.investigationPanel.hide();
+  objects.forEach(object=>object.destroy());
   this.children.list.filter(e=>e.depth===100&&e.type==='Text').forEach(e=>e.setVisible(false));
   this.cameras.main.resetFX();
   this.feedback.cue?.setVisible(false);
@@ -64,6 +87,35 @@ GameScene.prototype.create = async function() {
   for(let i=0;i<buttons.length;i++)for(let j=i+1;j<buttons.length;j++)check(!Phaser.Geom.Intersects.RectangleToRectangle(buttons[i].getBounds(),buttons[j].getBounds()),'overlap');
   if(location.search.includes('bolts')) {puzzle.destroy();ToolboxPuzzle.showBolts(this);}
   if(location.search.includes('hud')) {puzzle.destroy();this.inventoryPanel.show();}
+  if(location.search.includes('visual')) {
+   puzzle.destroy();this.children.removeAll(true);
+   const panel={show(){},hide(){}}, feedback={play(){}};
+   this.state.reset();this.state.solvePuzzle('상자');this.state.addItem('드라이버');this.state.selectItem('드라이버');
+   const prison=new PrisonRoom(this,panel,this.state,feedback);prison.create();
+   check(prison.background.texture.key==='prisonBackground','vent initially closed');
+   click('벽 낙서');click('바닥 쪽지');check(this.state.notes.length===2,'prison clue labels');
+   click('환풍구 덮개');
+   check(prison.background.texture.key==='prisonVentOpen','vent opens immediately');
+   this.state.save();this.state.reset();this.state.load();
+   this.children.removeAll(true);const prisonReload=new PrisonRoom(this,panel,this.state,feedback);prisonReload.create();
+   check(prisonReload.background.texture.key==='prisonVentOpen','saved vent');
+   if(!location.search.includes('vent')) {
+    this.children.removeAll(true);this.state.reset();
+    const visualControl=new ControlRoom(this,panel,this.state,feedback);visualControl.create();
+    check(visualControl.powerLabel.text==='전원 차단'&&!visualControl.exitLabel.visible,'control initially off');
+    this.state.solvePuzzle('배선');visualControl.refreshVisuals();
+    check(visualControl.powerLabel.text==='전원 복구'&&!visualControl.monitorShade.visible&&visualControl.background.texture.key==='controlBackground','power without open door');
+    if(location.search.includes('door')) {
+     this.state.solvePuzzle('비상문');visualControl.refreshVisuals();
+     check(visualControl.background.texture.key==='controlDoorOpen'&&visualControl.exitLabel.visible,'door opens');
+    }
+    this.state.save();const expectedKey=visualControl.background.texture.key;this.state.reset();this.state.load();
+    this.children.removeAll(true);const loadedControl=new ControlRoom(this,panel,this.state,feedback);loadedControl.create();
+    check(loadedControl.background.texture.key===expectedKey&&loadedControl.powerLabel.text==='전원 복구','saved control visuals');
+    this.state.reset();loadedControl.refreshVisuals();check(loadedControl.background.texture.key==='controlBackground'&&loadedControl.monitorShade.visible&&!loadedControl.exitLabel.visible,'new game visual reset');
+    this.state.load();loadedControl.refreshVisuals();
+   }
+  }
   window.audioManager.playEffect=playEffect;
   fetch('/report',{method:'POST',body:JSON.stringify({ok:true,width:this.scale.width,notes:this.state.notes.length,passage:this.state.isSolved('통제실 통로')})});
  } catch(error){fetch('/report',{method:'POST',body:JSON.stringify({ok:false,error:error.stack})});}
@@ -89,7 +141,7 @@ server.listen(0,'127.0.0.1',async()=>{
   const response=await fetch('https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js');
   if(!response.ok)throw Error('Phaser download failed');
   phaser=Buffer.from(await response.arrayBuffer());
-  for(const [width,view] of [[960,'hud'],[390,'hud'],[320,'hud'],[390,'puzzle'],[390,'bolts']]) {
+  for(const [width,view] of [[960,'hud'],[390,'hud'],[960,'visual-vent'],[390,'visual-vent'],[960,'visual-power'],[960,'visual-door'],[390,'visual-door']]) {
    const profile=fs.mkdtempSync(path.join(os.tmpdir(),'escape-toolbox-'));
    await new Promise((resolve,reject)=>{
     const child=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless','--disable-gpu','--no-first-run','--no-default-browser-check','--hide-scrollbars','--remote-debugging-port=0','--user-data-dir='+profile,'--window-size='+width+',780','about:blank'],{windowsHide:true,stdio:'ignore'});
@@ -117,6 +169,6 @@ server.listen(0,'127.0.0.1',async()=>{
     })().catch(error=>{child.kill();clearTimeout(timeout);reject(error);});
    });
   }
-  if(reports.length!==5||reports.some(r=>!r.ok))process.exitCode=1;
+  if(reports.length!==7||reports.some(r=>!r.ok))process.exitCode=1;
  }catch(error){console.error(error);process.exitCode=1;}finally{server.close();}
 });

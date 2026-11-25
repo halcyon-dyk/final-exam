@@ -15,6 +15,8 @@ class AudioManager {
     this.boltsSound.addMarker({ name: "inspect", start: 0, duration: 1.8 });
     this.wallSound = soundManager.add("wallSound");
     this.wallSound.addMarker({ name: "inspect", start: 0, duration: 1.2 });
+    this.cableSound = soundManager.add("cableSound");
+    this.cableSound.addMarker({ name: "connect", start: 0, duration: 1.2 });
   }
 
   unlock() {
@@ -59,6 +61,11 @@ class AudioManager {
   }
 
   playEffect(type) {
+    if (this.soundManager && type === "cable") {
+      this.cableSound.stop();
+      this.cableSound.play("connect", { volume: 0.8 });
+      return;
+    }
     if (this.soundManager && (type === "bolts" || type === "wall")) {
       const sound = type === "bolts" ? this.boltsSound : this.wallSound;
       sound.stop();

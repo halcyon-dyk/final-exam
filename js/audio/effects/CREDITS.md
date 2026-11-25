@@ -28,3 +28,10 @@
 
 - 위 두 파일은 공개 LQ MP3 미리듣기 녹음이며 파일 자체는 편집하지 않았다. 볼트는 처음 1.8초(음량 0.85), 벽은 처음 1.2초(음량 0.55)를 재생한다.
 - 작업일지는 기존 paper-rustle.mp3, 손전등 본체는 flashlight-switch.mp3, 공구함은 metal-knock.mp3를 사용한다. 손전등을 선택한 상태로 벽면을 누르면 두드림 대신 flashlight-switch.mp3가 재생된다.
+
+## 통제실 조사·배선 연결 효과음 (2026-11-25)
+
+- cable-connect.wav: “Plugging Thunderbolt/USB-C” by marco_luzi, https://freesound.org/people/marco_luzi/sounds/426688/ — CC BY 3.0, https://creativecommons.org/licenses/by/3.0/
+- 원본 공개 LQ MP3의 0.8~2.0초를 추출하여 모노 PCM WAV로 변환했다. 피크를 0.65로 정규화하고 시작 5ms/끝 20ms 페이드를 적용했다. 전선 조사 및 단자 연결 시 음량 0.8로 재생한다. 배포 시 저작자·원본·라이선스·변경 내용을 포함한 이 출처 문서를 함께 제공한다.
+- 배선도·실험 기록·시설 지도는 기존 paper-rustle.mp3, 잠긴 비상문은 metal-knock.mp3를 사용한다. 전원 복구와 비상문 해제는 기존 power-restore.mp3 및 security-door-open.mp3를 유지한다.
+- 전선 선택·기호 입력에는 게임의 기존 짧은 합성 조작음, 잘못된 입력에는 기존 오류음을 사용한다.

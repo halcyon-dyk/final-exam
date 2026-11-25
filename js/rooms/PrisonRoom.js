@@ -10,19 +10,19 @@ class PrisonRoom {
     const stage = this.scene.layout.stage;
 
     this.createBackground(stage);
-    this.createObject(stage.x + stage.width * 0.67, stage.y + stage.height * 0.28, stage.width * 0.2, stage.height * 0.24, "벽 낙서", "삼각형 → 원 → 사각형 기호가 표시되어 있다.", () => {
+    this.createObject(stage.x + stage.width * 0.67, stage.y + stage.height * 0.30, stage.width * 0.28, stage.height * 0.16, "벽 낙서", "삼각형 → 원 → 사각형 기호가 표시되어 있다.", () => {
       window.audioManager.playEffect("scribble");
       this.state.addNote("상자 기호 순서: 삼각형 → 원 → 사각형");
     });
-    this.createObject(stage.x + stage.width * 0.5, stage.y + stage.height * 0.78, stage.width * 0.16, stage.height * 0.14, "바닥 쪽지", "원=2, 사각형=7, 삼각형=4라고 적혀 있다.", () => {
+    this.createObject(stage.x + stage.width * 0.5, stage.y + stage.height * 0.845, stage.width * 0.12, stage.height * 0.08, "바닥 쪽지", "원=2, 사각형=7, 삼각형=4라고 적혀 있다.", () => {
       window.audioManager.playEffect("paper");
       this.state.addNote("기호 값: 원=2, 사각형=7, 삼각형=4");
     });
 
     if (this.state.isSolved("상자")) {
-      this.createObject(stage.x + stage.width * 0.77, stage.y + stage.height * 0.62, stage.width * 0.25, stage.height * 0.4, "열린 상자", "상자 안에서 드라이버를 발견했다.");
+      this.createObject(stage.x + stage.width * 0.80, stage.y + stage.height * 0.68, stage.width * 0.25, stage.height * 0.23, "열린 상자", "상자 안에서 드라이버를 발견했다.");
       if (!this.state.hasItem("드라이버")) {
-        this.createObject(stage.x + stage.width * 0.74, stage.y + stage.height * 0.72, stage.width * 0.14, stage.height * 0.1, "드라이버", "드라이버를 획득했다.", () => {
+        this.createObject(stage.x + stage.width * 0.80, stage.y + stage.height * 0.74, stage.width * 0.14, stage.height * 0.08, "드라이버", "드라이버를 획득했다.", () => {
           this.state.addItem("드라이버");
           this.state.solvePuzzle("드라이버 획득");
           if (this.scene.inventoryPanel.background.visible) {
@@ -31,11 +31,11 @@ class PrisonRoom {
           this.feedback.play("드라이버를 획득했다. 환풍구에 사용해 보세요.");
         });
       }
-      this.createObject(stage.x + stage.width * 0.18, stage.y + stage.height * 0.48, stage.width * 0.16, stage.height * 0.5, "환풍구 덮개", "드라이버로 나사를 풀 수 있다.", () => this.openVent());
+      this.ventTag = this.createObject(stage.x + stage.width * 0.30, stage.y + stage.height * 0.425, stage.width * 0.28, stage.height * 0.20, this.state.isSolved("정비실 통로") ? "열린 환풍구" : "환풍구 덮개", "드라이버로 나사를 풀 수 있다.", () => this.openVent());
       return;
     }
 
-    this.createObject(stage.x + stage.width * 0.77, stage.y + stage.height * 0.62, stage.width * 0.25, stage.height * 0.4, "잠긴 상자", "비밀번호를 입력해야 열 수 있다.", () => {
+    this.createObject(stage.x + stage.width * 0.80, stage.y + stage.height * 0.68, stage.width * 0.25, stage.height * 0.23, "잠긴 상자", "비밀번호를 입력해야 열 수 있다.", () => {
       window.audioManager.playEffect("metal");
       if (this.state.notes.length < 2) {
         this.panel.show("상자", "비밀번호 단서를 먼저 찾아야 한다.");
@@ -51,29 +51,25 @@ class PrisonRoom {
   }
 
   createBackground(stage) {
-    const texture = this.scene.textures.get("prisonBackground");
-    if (!texture.has("roomView")) {
-      const source = texture.getSourceImage();
-      const roomLeft = Math.round(source.width * (78 / 1366));
-      const roomTop = Math.round(source.height * (164 / 768));
-      const roomWidth = Math.round(source.width * (840 / 1366));
-      texture.add("roomView", 0, roomLeft, roomTop, roomWidth, source.height - roomTop);
-    }
-    this.scene.add.image(
+    this.background = this.scene.add.image(
       stage.x + stage.width / 2,
       stage.y + stage.height / 2,
-      "prisonBackground",
-      "roomView",
+      this.state.isSolved("정비실 통로") ? "prisonVentOpen" : "prisonBackground",
     ).setDisplaySize(stage.width, stage.height);
   }
 
   openVent() {
-    if (this.state.isSolved("정비실 통로")) return;
+    if (this.state.isSolved("정비실 통로")) {
+      this.panel.show("열린 환풍구", "덮개가 제거되어 정비실로 가는 통로가 열려 있다.");
+      return;
+    }
     if (this.state.selectedItem !== "드라이버") {
       this.panel.show("환풍구", "보관함에서 드라이버를 선택한 뒤 사용하세요.");
       return;
     }
     this.state.solvePuzzle("정비실 통로");
+    if (this.background) this.background.setTexture("prisonVentOpen").setDisplaySize(this.scene.layout.stage.width, this.scene.layout.stage.height);
+    this.ventTag?.setText("열린 환풍구");
     this.panel.hide();
     window.audioManager.playEffect("screwdriver");
     this.feedback.play("환풍구 덮개가 제거되었다.\n정비실로 가는 통로가 열렸다.", "feedback", 5000);
@@ -98,6 +94,7 @@ class PrisonRoom {
       this.panel.show(label, message);
       onInspect?.();
     });
+    return tag;
   }
 }
 

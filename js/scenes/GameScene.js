@@ -4,14 +4,18 @@ class GameScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("prisonBackground", "js/images/%EA%B0%90%EA%B8%88%EC%8B%A4.png");
+    this.load.image("prisonBackground", "js/images/prison-background-v2.png");
+    this.load.image("prisonVentOpen", "js/images/prison-vent-open-v2.png");
     this.load.image("maintenanceBackground", "js/images/maintenance-background-v2.png");
+    this.load.image("maintenanceToolboxOpen", "js/images/maintenance-toolbox-open.png");
+    this.load.image("controlDoorOpen", "js/images/control-door-open.png");
     this.load.image("controlBackground", "js/images/%ED%86%B5%EC%A0%9C%EC%8B%A4-%EC%A0%81%EC%9A%A9.png");
     this.load.audio("scribbleSound", "js/audio/effects/pencil-writing.mp3");
     this.load.audio("paperSound", "js/audio/effects/paper-rustle.mp3");
     this.load.audio("metalSound", "js/audio/effects/metal-knock.mp3");
     this.load.audio("boltsSound", "js/audio/effects/bolts-rattle.mp3");
     this.load.audio("wallSound", "js/audio/effects/wall-knock.mp3");
+    this.load.audio("cableSound", "js/audio/effects/cable-connect.wav");
     this.load.audio("unlockSound", "js/audio/effects/padlock-open.mp3");
     this.load.audio("screwdriverSound", "js/audio/effects/ratchet-screwdriver.mp3");
     this.load.audio("flashlightSound", "js/audio/effects/flashlight-switch.mp3");

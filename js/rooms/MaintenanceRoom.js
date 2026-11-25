@@ -13,7 +13,7 @@ class MaintenanceRoom {
       window.audioManager.playEffect("flashlight");
       this.collectPart("손전등 본체");
     });
-    this.createObject(stage.x + stage.width * 0.84, stage.y + stage.height * 0.50, stage.width * 0.23, stage.height * 0.16, "공구함", "배터리가 보관된 공구함이다. 기호 잠금장치가 달려 있다.", () => this.openToolbox());
+    this.toolboxTag = this.createObject(stage.x + stage.width * 0.84, stage.y + stage.height * 0.50, stage.width * 0.23, stage.height * 0.16, "공구함", "배터리가 보관된 공구함이다. 기호 잠금장치가 달려 있다.", () => this.openToolbox());
     this.createObject(stage.x + stage.width * 0.18, stage.y + stage.height * 0.55, stage.width * 0.18, stage.height * 0.13, "작업일지", "낡은 정비 작업일지다.", () => {
       window.audioManager.playEffect("paper");
       const note = "작업일지: 작은 볼트부터 큰 볼트 순서로 점검";
@@ -27,14 +27,27 @@ class MaintenanceRoom {
       ToolboxPuzzle.showBolts(this.scene);
     });
     this.createObject(stage.x + stage.width * 0.63, stage.y + stage.height * 0.28, stage.width * 0.32, stage.height * 0.22, "어두운 벽면", "빛을 비추면 무언가 드러날 것 같다.", () => this.useFlashlight());
+    this.refreshVisuals();
   }
 
   createBackground(stage) {
-    this.scene.add.image(
+    this.background = this.scene.add.image(
       stage.x + stage.width / 2,
       stage.y + stage.height / 2,
       "maintenanceBackground",
     ).setDisplaySize(stage.width, stage.height);
+  }
+
+  refreshVisuals() {
+    const open = this.state.isSolved("공구함");
+    this.background?.setTexture(open ? "maintenanceToolboxOpen" : "maintenanceBackground");
+    if (this.background) this.background.setDisplaySize(this.scene.layout.stage.width, this.scene.layout.stage.height);
+    this.toolboxTag?.setText(open ? "열린 공구함" : "공구함");
+    if (this.toolboxTag) {
+      const stage = this.scene.layout.stage;
+      this.toolboxTag.y = stage.y + stage.height * (open ? 0.25 : 0.42) - 4;
+      this.toolboxTag.x = Math.min(stage.x + stage.width * 0.84, stage.x + stage.width - this.toolboxTag.width / 2);
+    }
   }
 
   collectPart(part) {
@@ -56,6 +69,7 @@ class MaintenanceRoom {
     new ToolboxPuzzle(this.scene, ["△", "⬡", "□"], () => {
       this.state.solvePuzzle("공구함");
       this.collectPart("배터리");
+      this.refreshVisuals();
       this.feedback.play("공구함이 열렸다. 배터리를 획득했다.", "unlock");
     });
   }
@@ -93,6 +107,7 @@ class MaintenanceRoom {
       this.panel.show(label, message);
       onInspect?.();
     });
+    return tag;
   }
 }
 

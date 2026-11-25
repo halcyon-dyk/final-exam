@@ -32,7 +32,10 @@ class SequencePuzzle {
   }
 
   select(symbol) {
-    if (this.input.length < this.expected.length) this.input.push(symbol);
+    if (this.input.length < this.expected.length) {
+      this.input.push(symbol);
+      if (this.inputSound) window.audioManager.playEffect(this.inputSound);
+    }
     this.message.setText("");
     this.update();
   }
