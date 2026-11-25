@@ -2,7 +2,7 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>지하 시설 탈출</title>
     <style>
       * { box-sizing: border-box; }
@@ -13,42 +13,80 @@
         display: grid;
         place-items: center;
         background: #f3f6fb;
+        overscroll-behavior: none;
+        padding: var(--safe-top, 0px) var(--safe-right, 0px) var(--safe-bottom, 0px) var(--safe-left, 0px);
       }
 
       #game-container {
-        width: min(100vw, 960px);
-        height: min(100svh, 640px);
+        width: min(calc(100vw - var(--safe-left, 0px) - var(--safe-right, 0px)), 960px);
+        height: min(calc(100svh - var(--safe-top, 0px) - var(--safe-bottom, 0px)), 640px);
         background: #fff;
       }
 
       #game-container canvas {
         display: block;
       }
+      #boot-status {
+        position: fixed; inset: 0; margin: 0; display: grid; place-items: center;
+        background: #111315; color: #d7d2c8; font: 22px sans-serif; z-index: 10;
+      }
+      #boot-status[hidden] { display: none; }
     </style>
   </head>
   <body>
     <main id="game-container" aria-label="지하 시설 탈출 게임 영역"></main>
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
-    <script src="js/state/GameState.js?v=20261125-toolbox"></script>
-    <script src="js/audio/AudioManager.js?v=20261125-volume"></script>
-    <script src="js/ui/AudioSettingsPanel.js?v=20261125-volume"></script>
-    <script src="js/ui/Layout.js?v=20261125-toolbar"></script>
-    <script src="js/ui/InvestigationPanel.js?v=20261125-toolbar"></script>
-    <script src="js/ui/InventoryPanel.js?v=20261125-toolbar"></script>
-    <script src="js/ui/MemoPanel.js?v=20261125-toolbar"></script>
-    <script src="js/ui/TimerDisplay.js?v=20261125-toolbar"></script>
-    <script src="js/ui/HintPanel.js?v=20261125-toolbar"></script>
-    <script src="js/ui/Feedback.js?v=20261125-notice"></script>
-    <script src="js/puzzles/CodePuzzle.js?v=20261125-metal-puzzle"></script>
-    <script src="js/puzzles/WirePuzzle.js?v=20261125-metal-puzzle"></script>
-    <script src="js/puzzles/SequencePuzzle.js?v=20261125-metal-puzzle"></script>
-    <script src="js/puzzles/ToolboxPuzzle.js?v=20261125-toolbox"></script>
-    <script src="js/rooms/PrisonRoom.js?v=20261125-box-open"></script>
-    <script src="js/rooms/MaintenanceRoom.js?v=20261125-visual-state"></script>
-    <script src="js/rooms/ControlRoom.js?v=20261125-visual-state"></script>
-    <script src="js/scenes/StartScene.js?v=20261125-start-path"></script>
-    <script src="js/scenes/GameScene.js?v=20261125-volume"></script>
-    <script src="js/scenes/ResultScene.js?v=20261125-startfix"></script>
-    <script src="js/main.js?v=20261125-startfix"></script>
+    <p id="boot-status" role="status">시설을 불러오는 중…</p>
+    <script type="module">
+      // SDK import completes before Phaser or any game script executes.
+      let sdk = null;
+      try {
+        const { createSDK } = await import("https://h5sdk.onestore.net/lib/v1.2.0/onestore-h5-sdk.min.js");
+        sdk = createSDK();
+      } catch (error) {
+        console.warn("ONE store SDK unavailable; starting browser mode.", error);
+      }
+      const { OneStoreBridge } = await import("./js/platform/OneStore.js?v=20261125-onestore");
+      window.oneStore = new OneStoreBridge(sdk);
+      await window.oneStore.initialize();
+      const scripts = [
+        "https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js",
+        "js/state/GameState.js?v=20261125-onestore",
+        "js/audio/AudioManager.js?v=20261125-onestore",
+        "js/ui/AudioSettingsPanel.js?v=20261125-onestore",
+        "js/ui/Layout.js?v=20261125-onestore",
+        "js/ui/InvestigationPanel.js?v=20261125-onestore",
+        "js/ui/InventoryPanel.js?v=20261125-onestore",
+        "js/ui/MemoPanel.js?v=20261125-onestore",
+        "js/ui/TimerDisplay.js?v=20261125-onestore",
+        "js/ui/HintPanel.js?v=20261125-onestore",
+        "js/ui/Feedback.js?v=20261125-onestore",
+        "js/puzzles/CodePuzzle.js?v=20261125-onestore",
+        "js/puzzles/WirePuzzle.js?v=20261125-onestore",
+        "js/puzzles/SequencePuzzle.js?v=20261125-onestore",
+        "js/puzzles/ToolboxPuzzle.js?v=20261125-onestore",
+        "js/rooms/PrisonRoom.js?v=20261125-onestore",
+        "js/rooms/MaintenanceRoom.js?v=20261125-onestore",
+        "js/rooms/ControlRoom.js?v=20261125-onestore",
+        "js/scenes/StartScene.js?v=20261125-onestore",
+        "js/scenes/GameScene.js?v=20261125-onestore",
+        "js/scenes/ResultScene.js?v=20261125-onestore",
+        "js/scenes/BootScene.js?v=20261125-onestore",
+        "js/main.js?v=20261125-onestore"
+];
+      try {
+        for (const src of scripts) {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = src;
+            script.onload = resolve;
+            script.onerror = () => reject(new Error(src));
+            document.head.appendChild(script);
+          });
+        }
+      } catch (error) {
+        document.getElementById("boot-status").textContent = "게임을 불러오지 못했습니다. 새로고침해 주세요.";
+        console.error(error);
+      }
+    </script>
   </body>
 </html>

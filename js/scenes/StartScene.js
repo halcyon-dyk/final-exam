@@ -16,11 +16,8 @@ class StartScene extends Phaser.Scene {
     this.add.image(width / 2, height / 2, "startBackground").setDisplaySize(width, height);
 
     this.addButtonArea(width / 2, height * 0.526, width * 0.23, height * 0.082, () => {
-      if (window.gameState.hasActiveSave() && !window.confirm("진행 중인 기록을 지우고 새 게임을 시작할까요?")) return;
-      window.audioManager.playEffect("click");
-      window.gameState.reset();
-      window.gameState.save();
-      this.scene.start("GameScene");
+      if (window.gameState.hasActiveSave()) this.confirmNewGame();
+      else this.startNewGame();
     });
 
     if (window.gameState.hasActiveSave()) {
@@ -44,6 +41,29 @@ class StartScene extends Phaser.Scene {
     this.add.rectangle(x, y, width, height, 0x000000, 0)
       .setInteractive({ useHandCursor: true })
       .on("pointerdown", onClick);
+  }
+
+  startNewGame() {
+    window.audioManager.playEffect("click");
+    window.gameState.reset();
+    window.gameState.save();
+    this.scene.start("GameScene");
+  }
+
+  confirmNewGame() {
+    if (this.confirmElements?.length) return;
+    const { width, height } = this.scale;
+    const elements = this.confirmElements = [];
+    const add = element => { elements.push(element.setDepth(500)); return element; };
+    const close = () => { elements.forEach(element => element.destroy()); this.confirmElements = []; };
+    add(this.add.rectangle(width / 2, height / 2, Math.min(360, width - 20), 220, 0x111315).setStrokeStyle(2, 0xd79a32));
+    add(this.add.text(width / 2, height / 2 - 40, "진행 중인 기록을 지우고\n새 게임을 시작할까요?", { fontSize: "22px", color: "#d7d2c8", align: "center" }).setOrigin(0.5));
+    [["취소", -65, close], ["새 게임", 65, () => { close(); this.startNewGame(); }]].forEach(([label, offset, action]) => {
+      add(this.add.rectangle(width / 2 + offset, height / 2 + 55, 110, 44, 0x30363a).setStrokeStyle(1, 0xd79a32).setInteractive({ useHandCursor: true })).on("pointerdown", action);
+      add(this.add.text(width / 2 + offset, height / 2 + 55, label, { fontSize: "18px", color: "#d7d2c8" }).setOrigin(0.5));
+    });
+    window.fitDialog(this, elements);
+    this.events.once("shutdown", () => { this.confirmElements = []; });
   }
 }
 

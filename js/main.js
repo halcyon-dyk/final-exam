@@ -8,7 +8,8 @@ const config = {
     mode: Phaser.Scale.RESIZE,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [StartScene, GameScene, ResultScene],
+  scene: [BootScene, StartScene, GameScene, ResultScene],
 };
 
-new Phaser.Game(config);
+window.escapeGame = new Phaser.Game(config);
+window.oneStore.attach(window.escapeGame);

@@ -159,18 +159,19 @@ GameScene.prototype.create = async function() {
 };
 window.gameState.reset();window.gameState.currentRoom='정비실';
 window.gameState.solvePuzzle('상자');window.gameState.solvePuzzle('정비실 통로');
-config.scene=[GameScene];config.audio={disableWebAudio:false};new Phaser.Game(config);
+config.scene=[GameScene];config.audio={disableWebAudio:false};window.escapeGame=new Phaser.Game(config);window.oneStore.started=true;window.oneStore.attach(window.escapeGame);
 `;
 const server = http.createServer((req,res)=>{
  if(req.url==='/audio-audit'){let body='';req.on('data',d=>body+=d);req.on('end',()=>{fs.writeFileSync(path.join(root,'tests/audio-audit.json'),body);res.end('ok');});return;}
  if(req.url==='/test-phaser.js'){res.setHeader('Content-Type','text/javascript');res.end(phaser);return;}
+ if(req.url==='/test-sdk.js'){res.setHeader('Content-Type','text/javascript');res.end('export function createSDK(){return {on(){},onBackPressed(){},async initializeAsync(){return {err:"Platform Not Supported"}}}}');return;}
  if(req.url==='/report'){let body='';req.on('data',d=>body+=d);req.on('end',()=>{reports.push(JSON.parse(body));console.log(body);res.end('ok');});return;}
  let name=decodeURIComponent(req.url.split('?')[0]);if(name==='/')name='/index.html';
  const file=path.resolve(root,'.'+name);if(!file.startsWith(root+path.sep)){res.writeHead(403).end();return;}
  try {
   let data=fs.readFileSync(file);
-  if(name==='/index.html')data=data.toString().replace('https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js','/test-phaser.js');
-  if(name==='/js/main.js')data=data.toString().replace('new Phaser.Game(config);',harness);
+  if(name==='/index.html')data=data.toString().replace('https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js','/test-phaser.js').replace('https://h5sdk.onestore.net/lib/v1.2.0/onestore-h5-sdk.min.js','/test-sdk.js');
+  if(name==='/js/main.js')data=data.toString().replace(/window.escapeGame = new Phaser.Game\(config\);\s*window.oneStore.attach\(window.escapeGame\);/,harness);
   res.setHeader('Content-Type',({'.html':'text/html','.js':'text/javascript','.png':'image/png','.mp3':'audio/mpeg'})[path.extname(file)]||'text/plain');res.end(data);
  }catch{res.writeHead(404).end();}
 });

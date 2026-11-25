@@ -23,7 +23,22 @@ class AudioManager {
     this.applySettings();
   }
 
-  level(category) { return this.settings.muted ? 0 : this.settings[category]; }
+  level(category) { return this.settings.muted || this.platformPaused || this.ringerSilent ? 0 : this.settings[category]; }
+
+  setPlatformState(paused, ringerSilent) {
+    const changed = this.platformPaused !== paused;
+    this.platformPaused = paused;
+    this.ringerSilent = ringerSilent;
+    this.applySettings();
+    if (!this.context || !changed) return;
+    if (paused) {
+      this.resumeSynth = this.context.state === "running";
+      this.context.suspend().catch(() => {});
+    } else if (this.resumeSynth) {
+      this.context.resume().catch(() => {});
+      this.resumeSynth = false;
+    }
+  }
 
   applySettings() {
     if (this.background) this.background.setVolume(this.backgroundBase * this.level("music"));
@@ -76,13 +91,14 @@ class AudioManager {
   }
 
   runAfterUnlock(callback) {
+    if (this.platformPaused) return;
     const context = this.unlock();
     if (!context) return;
     if (context.state === "running") {
       callback();
       return;
     }
-    context.resume().then(callback).catch(() => {});
+    context.resume().then(() => { if (!this.platformPaused) callback(); }).catch(() => {});
   }
 
   setRoom(room) {
