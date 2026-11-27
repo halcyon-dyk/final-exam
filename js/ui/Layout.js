@@ -31,7 +31,7 @@ window.fitDialog = function(scene, elements) {
 
 window.watchResize = function(scene) {
   let pending;
-  const resize = () => { clearTimeout(pending); pending = setTimeout(() => { if (scene.sys.isActive()) scene.scene.restart({ success: scene.success }); }, 150); };
+  const resize = () => { clearTimeout(pending); pending = setTimeout(() => { if (scene.sys.isActive()) scene.scene.restart({ success: scene.success, restoreMenu: scene.pausedForMenu === true, menuHelp: scene.menuHelp }); }, 150); };
   scene.scale.on("resize", resize);
   scene.events.once("shutdown", () => { clearTimeout(pending); scene.scale.off("resize", resize); });
 };

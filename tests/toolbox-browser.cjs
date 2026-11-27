@@ -93,7 +93,7 @@ GameScene.prototype.create = async function() {
   const control = new ControlRoom(this,this.investigationPanel,this.state,this.feedback);
   control.createBackground=()=>{};
   const beforeControl=this.children.list.length;control.create();
-  const objects=this.children.list.slice(beforeControl);
+  const objects=this.children.list.slice(beforeControl).filter(e=>e.type==='Rectangle');
   for(const index of [0,2,3]){objects[index].emit('pointerdown');check(effectCalls.at(-1)==='paper','document sound');this.investigationPanel.hide();}
   objects[1].emit('pointerdown');check(effectCalls.at(-1)==='cable','inspect wires');
   click('1');check(effectCalls.at(-1)==='error','terminal without wire');
@@ -143,17 +143,17 @@ GameScene.prototype.create = async function() {
    if(!location.search.includes('vent')) {
     this.children.removeAll(true);this.state.reset();
     const visualControl=new ControlRoom(this,panel,this.state,feedback);visualControl.create();
-    check(visualControl.powerLabel.text==='전원 차단'&&!visualControl.exitLabel.visible,'control initially off');
+    check(visualControl.powerLabel.text==='전원 차단'&&visualControl.doorTag.text==='비상문','control initially off');
     this.state.solvePuzzle('배선');visualControl.refreshVisuals();
-    check(visualControl.powerLabel.text==='전원 복구'&&!visualControl.monitorShade.visible&&visualControl.background.texture.key==='controlBackground','power without open door');
+    check(visualControl.powerLabel.text==='전원 복구'&&visualControl.doorTag.text==='비상문'&&visualControl.background.texture.key==='controlPowered','power without open door');
     if(location.search.includes('door')) {
      this.state.solvePuzzle('비상문');visualControl.refreshVisuals();
-     check(visualControl.background.texture.key==='controlDoorOpen'&&visualControl.exitLabel.visible,'door opens');
+     check(visualControl.background.texture.key==='controlDoorOpen'&&visualControl.doorTag.text==='열린 비상문','door opens');
     }
     this.state.save();const expectedKey=visualControl.background.texture.key;this.state.reset();this.state.load();
     this.children.removeAll(true);const loadedControl=new ControlRoom(this,panel,this.state,feedback);loadedControl.create();
     check(loadedControl.background.texture.key===expectedKey&&loadedControl.powerLabel.text==='전원 복구','saved control visuals');
-    this.state.reset();loadedControl.refreshVisuals();check(loadedControl.background.texture.key==='controlBackground'&&loadedControl.monitorShade.visible&&!loadedControl.exitLabel.visible,'new game visual reset');
+    this.state.reset();loadedControl.refreshVisuals();check(loadedControl.background.texture.key==='controlBackground'&&loadedControl.doorTag.text==='비상문','new game visual reset');
     this.state.load();loadedControl.refreshVisuals();
    }
   }

@@ -11,6 +11,8 @@ node tests/audio-settings.cjs
 node tests/power-browser.cjs
 node tests/power-browser.cjs --enhanced
 node tests/toolbox-browser.cjs
+node tests/power-browser.cjs --audit
+node tests/power-browser.cjs --visual
 ```
 
 - 단위 검사: 7과제·21단계 힌트 공개, 무료 재열람·저장 복원, 구버전 저장 변환·발견한 문서만 교체·반복 로드, 잘못된 저장, 음향 설정.
@@ -28,3 +30,7 @@ node tests/toolbox-browser.cjs
 4. 원스토어 앱 실기기에서 SDK 시작·백그라운드 복귀·기기 무음·종료 후 이어하기를 별도 확인한다.
 
 자동 검사의 버튼 이벤트 검증은 실제 터치 감각이나 설명 없는 사람의 추론 가능성 검증을 대신하지 않는다.
+
+배경 조화 검사는 `--visual`로 실행한다. 3개 해상도에서 9가지 방 상태의 저장 복원과 이름표 배치를 검사하고 상태별 화면을 생성한다. 파일 대응표: [배경 상태 목록](../js/images/visual-states.md).
+
+2026-11-27 추가 점검: [전체 점검 결과와 후속 수정](review-2026-11-27.md). `--audit`는 실제 좌표 클릭으로 조합·전선·지도를 검사하고 일시정지/도움말의 반복 리사이즈·계속하기를 검증한다. 발견한 1~3번 결함 수정 후 회귀 검사로 전환했다.

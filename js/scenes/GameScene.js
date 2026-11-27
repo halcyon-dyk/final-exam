@@ -7,10 +7,12 @@ class GameScene extends Phaser.Scene {
     this.load.image("prisonBackground", "js/images/prison-background-v2.png");
     this.load.image("prisonBoxOpen", "js/images/prison-box-open.png");
     this.load.image("prisonBoxVentOpen", "js/images/prison-box-vent-open.png");
-    this.load.image("maintenanceBackground", "js/images/maintenance-background-v2.png");
+    this.load.image("maintenanceBackground", "js/images/maintenance-background-v3.png");
     this.load.image("maintenanceToolboxOpen", "js/images/maintenance-toolbox-open.png");
-    this.load.image("controlDoorOpen", "js/images/control-door-open.png");
-    this.load.image("controlBackground", "js/images/%ED%86%B5%EC%A0%9C%EC%8B%A4-%EC%A0%81%EC%9A%A9.png");
+    this.load.image("maintenancePowered", "js/images/maintenance-power-on.png");
+    this.load.image("controlDoorOpen", "js/images/control-door-open-v2.png");
+    this.load.image("controlBackground", "js/images/control-power-off-v2.png");
+    this.load.image("controlPowered", "js/images/control-power-on-v2.png");
     this.load.audio("scribbleSound", "js/audio/effects/pencil-writing.mp3");
     this.load.audio("paperSound", "js/audio/effects/paper-rustle.mp3");
     this.load.audio("metalSound", "js/audio/effects/metal-knock.mp3");
@@ -27,7 +29,7 @@ class GameScene extends Phaser.Scene {
     this.load.audio("controlAmbience", "js/audio/background/control-computers.mp3");
   }
 
-  create() {
+  create(data = {}) {
     window.watchResize(this);
     this.pausedForMenu = false;
     const { width, height } = this.scale;
@@ -65,6 +67,7 @@ class GameScene extends Phaser.Scene {
     this.createRoom();
 
     this.createToolbar(width);
+    if (data.restoreMenu) this.showMenu(data.menuHelp);
     if (this.state.migrationNoticePending) {
       this.state.migrationNoticePending = false;
       this.feedback.play("기록 해석이 갱신되었습니다.\n메모장에서 확인하세요", undefined, 5000);
@@ -74,6 +77,7 @@ class GameScene extends Phaser.Scene {
   showMenu(help) {
     if (this.pausedForMenu) return;
     this.pausedForMenu = true;
+    this.menuHelp = help === true;
     if (!help) {
       new AudioSettingsPanel(this);
       return;
@@ -136,13 +140,17 @@ class GameScene extends Phaser.Scene {
       return;
     }
     this.state.combiningItem = this.state.selectedItem;
-    this.investigationPanel.show("조합", "다른 아이템을 선택하세요.");
+    this.investigationPanel.hide();
+    this.memoPanel.hide();
+    this.inventoryPanel.show();
+    this.inventoryPanel.title.setText("조합: 다른 도구 선택");
   }
 
   finishCombine(item) {
     const first = this.state.combiningItem;
     if (!first || first === item) return;
     this.state.combiningItem = null;
+    this.inventoryPanel.title.setText("보관함");
     if ([first, item].includes("손전등 본체") && [first, item].includes("배터리")) {
       this.state.removeItem("손전등 본체");
       this.state.removeItem("배터리");

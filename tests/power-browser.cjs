@@ -7,7 +7,9 @@ const root = path.resolve(__dirname, '..');
 const reports = [];
 let phaser;
 const enhanced = process.argv.includes('--enhanced');
-const harness = enhanced ? fs.readFileSync(path.join(__dirname, 'enhanced-harness.js'), 'utf8') : `
+const audit = process.argv.includes('--audit');
+const visual = process.argv.includes('--visual');
+const harness = visual ? fs.readFileSync(path.join(__dirname, 'visual-harness.js'), 'utf8') : audit ? fs.readFileSync(path.join(__dirname, 'audit-harness.js'), 'utf8') : enhanced ? fs.readFileSync(path.join(__dirname, 'enhanced-harness.js'), 'utf8') : `
 (async()=>{
  const wait=ms=>new Promise(r=>setTimeout(r,ms));
  const check=(v,m)=>{if(!v)throw Error(m);};
@@ -153,7 +155,19 @@ server.listen(0,'127.0.0.1',async()=>{
      await send('Emulation.setDeviceMetricsOverride',{width,height:780,deviceScaleFactor:1,mobile:false});
      const before=reports.length;
      await send('Page.navigate',{url:'http://127.0.0.1:'+server.address().port+'/?'+view});
-     while(reports.length===before)await pause();
+     while(reports.length===before){
+      if(visual){
+       const capture=await send('Runtime.evaluate',{expression:'window.visualCapture'});
+       const name=capture.result?.value;
+       if(name){
+        await new Promise(r=>setTimeout(r,100));
+        const stateShot=await send('Page.captureScreenshot',{format:'png'});
+        fs.writeFileSync(path.join(root,'tests','visual-'+name+'-'+width+'.png'),Buffer.from(stateShot.data,'base64'));
+        await send('Runtime.evaluate',{expression:'window.visualCapture=null'});
+       }
+      }
+      await pause();
+     }
      await new Promise(r=>setTimeout(r,500));
      const shot=await send('Page.captureScreenshot',{format:'png'});
      fs.writeFileSync(path.join(root,'tests',(enhanced?'enhanced':view)+'-'+width+'.png'),Buffer.from(shot.data,'base64'));

@@ -11,7 +11,8 @@
     const active = () => game.scene.getScenes(true)[0];
     const click = label => {
       const current = active();
-      const text = current.children.list.find(e => e.active && e.visible && e.text === label);
+      const text = current.children.list.find(e => e.active && e.visible && e.text === label)
+        || current.inventoryPanel?.itemTexts.find(e => e.active && e.visible && label.startsWith('• ') && e.text === label.slice(2));
       check(text, 'missing button: ' + label);
       const target = text.input ? text : current.children.list.find(e => e.input && e.visible && e.depth === text.depth && Math.abs(e.x - text.x) < 4 && e.y === text.y);
       check(target, 'missing input: ' + label); target.emit('pointerdown');
@@ -43,6 +44,7 @@
       localStorage.setItem('escapeDisableFlash', 'true');
       click('바닥 쪽지'); dialog(); click('닫기'); click('벽 낙서'); click('닫기');
       click('잠긴 상자'); for (const digit of ['4', '2', '7']) click(digit); click('확인'); await settle();
+      await until(() => scene.children.list.some(e => e.active && e.visible && e.text === '드라이버'));
       click('드라이버'); scene.investigationPanel.hide();
       scene.inventoryPanel.show(); click('• 드라이버'); click('환풍구 덮개');
       check(state.isSolved('정비실 통로'), 'vent'); scene.moveToNextRoom(); await settle();
@@ -51,7 +53,7 @@
       click('볼트 조사'); click('닫기'); click('공구함');
       for (const symbol of ['△', '⬡', '□']) click(symbol); click('확인');
       click('손전등 본체'); scene.investigationPanel.hide();
-      scene.inventoryPanel.show(); click('• 손전등 본체'); click('조합'); click('닫기'); click('• 배터리');
+      scene.inventoryPanel.show(); click('• 손전등 본체'); click('조합'); click('• 배터리');
       check(state.hasItem('손전등') && !state.hasItem('배터리'), 'flashlight combination');
       click('어두운 벽면'); check(!state.isSolved('통제실 통로'), 'early passage');
       check(scene.hintPanel.getTask() === '전력 배분', 'power hint task');
@@ -63,8 +65,10 @@
       scene.pausedForMenu = true;
       // Resize restarts the room; labels and documents must remain usable.
       const width = scene.scale.width, height = scene.scale.height;
+      scene.pausedForMenu = false;
       game.scale.resize(width === 960 ? 390 : 960, height); await settle();
       click('작업일지'); dialog(); click('닫기');
+      scene.pausedForMenu = false;
       game.scale.resize(width, height); await settle();
       const tags = scene.children.list.filter(e => e.type === 'Text' && e.depth === 1 && e.input);
       tags.forEach(bounds);
@@ -95,7 +99,7 @@
         check(target, 'control object'); target.emit('pointerdown');
       };
       inspect(.18, .57); dialog(); click('›'); dialog(); click('›'); dialog(); click('닫기');
-      inspect(.7, .78); dialog(); click('닫기');
+      inspect(.7, .86); dialog(); click('닫기');
       scene.memoPanel.show(); scene.memoPanel.page = state.notes.findIndex(n => n.startsWith('실험 기록 B')); scene.memoPanel.render(); scene.memoPanel.contents.emit('pointerdown'); dialog(); click('닫기'); scene.memoPanel.hide();
       control.openWirePuzzle(); for (const label of ['A', '2', 'B', '3', 'C', '1']) click(label); click('확인');
       check(state.isSolved('배선'), 'wiring');

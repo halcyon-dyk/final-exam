@@ -53,12 +53,21 @@ class InventoryPanel {
 
     this.contents.setText("");
     this.contents.setVisible(false);
+    const columns = this.layout.isMobile ? Math.min(3, this.state.items.length) : 1;
+    const itemWidth = (this.layout.panel.width - 32 - (columns - 1) * 8) / columns;
+    const itemHeight = this.layout.isMobile ? 64 : 48;
     this.state.items.forEach((item, index) => {
-      const prefix = this.state.selectedItem === item ? "▶ " : "• ";
-      const itemText = this.scene.add.text(this.contents.x, this.contents.y + index * 30, `${prefix}${item}`, {
+      const selected = this.state.selectedItem === item;
+      const prefix = this.layout.isMobile ? "" : selected ? "▶ " : "• ";
+      const itemText = this.scene.add.text(this.contents.x + (index % columns) * (itemWidth + 8), this.contents.y + Math.floor(index / columns) * (itemHeight + 8), `${prefix}${item}`, {
         color: this.state.selectedItem === item ? "#d79a32" : "#d7d2c8",
+        backgroundColor: selected ? "#30363a" : "#111315",
         fontFamily: "sans-serif",
         fontSize: "18px",
+        fixedWidth: itemWidth,
+        fixedHeight: itemHeight,
+        padding: { left: 4, right: 4, top: 8, bottom: 8 },
+        wordWrap: { width: itemWidth - 8, useAdvancedWrap: true },
       }).setInteractive({ useHandCursor: true });
 
       itemText.on("pointerdown", () => {

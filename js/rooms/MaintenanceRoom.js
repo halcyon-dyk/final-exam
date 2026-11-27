@@ -44,7 +44,7 @@ class MaintenanceRoom {
   refreshVisuals() {
     const open = this.state.isSolved("공구함");
     this.powerStatus?.setText(this.state.isSolved("전력 배분") ? "환기 작동 · 통로 조명 켜짐" : "환기 정지 · 통로 조명 꺼짐");
-    this.background?.setTexture(open ? "maintenanceToolboxOpen" : "maintenanceBackground");
+    this.background?.setTexture(this.state.isSolved("전력 배분") && open ? "maintenancePowered" : open ? "maintenanceToolboxOpen" : "maintenanceBackground");
     if (this.background) this.background.setDisplaySize(this.scene.layout.stage.width, this.scene.layout.stage.height);
     this.toolboxTag?.setText(open ? "열린 공구함" : "공구함");
     if (this.toolboxTag) {

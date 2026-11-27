@@ -1,0 +1,26 @@
+# 배경 조화·상태별 이미지 — 2026-11-27
+
+내장 image_gen 사용. 원본은 보존하고 새 파일로 저장했다.
+
+## maintenance-background-v3.png
+
+Edit only the lock on the CLOSED toolbox at the right of this room image. Completely REMOVE the existing three symbol buttons and their entire gold plate (circle triangle square). Replace them with a single solid unmarked rectangular rusty steel protective sliding cover over the lock, with a narrow finger grip along the bottom edge. The cover is opaque, flat, DARK rusty metal matching the toolbox. NO symbols, NO circle, NO triangle, NO square, NO round buttons visible on the toolbox front. The puzzle symbols are hidden under this closed protective cover until examined in the game's UI. Keep toolbox closed and preserve the same image dimensions, camera, all room objects and their positions, lamp, papers, bolt tray, flashlight, pipes, wall textures and lighting. No text, no UI, no watermark. This is an object replacement of the entire front lock, not a recolor.
+
+기호를 육각형으로 직접 바꾸는 초기 두 시도는 정확하지 않아 채택하지 않았다. 최종본에서는 잠금장치 덮개로 잘못된 기호를 가렸고 실제 기호는 기존 퍼즐창에서 표시한다.
+
+## control-power-off-v2.png
+
+Create one 4:3 landscape room-only background for a dark escape-room game. Image1 is the old control-room composition reference; discard ALL its user interface, labels, texts, top bar and side memo panel. Image2 is the required photorealistic material/lighting style reference. Render the control room in the same realistically weathered rusty metal, stained concrete and amber cage lamp style as image2, not cartoon outlines. Entire canvas is the ROOM, no UI or labels, no watermark. Fixed front view layout precisely in normalized full-image coordinates: aged wiring schematic sheet on left wall centered x17% y24%; paper research journal on left workbench centered x18% y57%; bank of FOUR dark switched-OFF CRT monitors centered x52% y24%; exposed wire panel and dangling cables centered x55% y50%, occupying x35-75% y28-72%; large paper floor plan on foreground right table centered x70% y86%, occupying x49-91% y74-98%; tall CLOSED steel emergency door rightmost, occupying x80-99% y9-64%, with a small dim red emergency lamp above. Door interior must not be visible. Low ambient amber worklamp light illuminates the room enough to read objects; monitors/screens entirely off, no green glow. Claustrophobic abandoned underground industrial facility, no characters, no gore, no extra puzzle objects, no legible letters or arrows or Korean labels. Preserve functional separation between each object and generous visible areas for runtime labels. This is the base POWER-OFF, DOOR-CLOSED state; future variants will change only lights and door.
+
+## control-power-on-v2.png
+
+Edit this exact room image into its POWER-ON, DOOR-STILL-CLOSED state. Keep camera, image dimensions 4:3, all object positions, all outlines and textures and colors identical. ONLY switch on the four currently black CRT screens with subtle desaturated amber monochrome technical traces (no readable words), a few tiny amber console indicators, and the small door keypad backlight. Add physically natural very subtle amber monitor light spill on nearby metal. Keep door fully CLOSED in precisely the same position. Preserve wiring cabinet, hanging cables, wall schematic, research journal, foreground floorplan, tables, pipes, red emergency lamp and cage worklamp unchanged. No user interface, no labels, no watermark, no new objects, no cartoon styling, no green neon.
+
+## control-door-open-v2.png
+
+Precise object edit: this exact 4:3 room is the POWER-ON state. Make its DOOR-OPEN variant. Change ONLY the closed steel emergency door on the far right: swing its leaf inward out of the doorway, expose a narrow upward stairwell beyond the original doorframe lit by a single distant warm amber cage lamp. Keep the doorframe in the exact same position and size. Do not widen or move the opening. Keep the FOUR amber CRT displays on, the desk and all wire cables, papers, journal, foreground floorplan, pipes, walls, red lamp, camera, crop, lighting elsewhere and room geometry IDENTICAL. Realistic rusty dark industrial horror environment matching original. No new objects outside doorway, no characters, no UI, no labels, no readable text, no arrows, no watermark.
+
+## maintenance-power-on.png
+
+Precise lighting/state edit of this exact 4:3 maintenance-room game background. It currently shows the toolbox OPEN and EMPTY; keep that unchanged. Create the POWER-RESTORED version: the small closed electrical cabinet at x32% y27% now has two tiny warm amber indicator lights on its lower face; gentle warm passage light entering from off-frame RIGHT illuminates the right-hand floor and gives a realistic amber reflection on the rusty workbench legs. The floor ventilation grille stays in precisely the same place and may show faint ambient light in the slats. Keep the room dark and frightening, not a brightly lit workshop. All camera, framing, geometry, rust textures, left worklamp, left journal, three bolts centered on tray, flashlight parts under left table, OPEN EMPTY toolbox on right, wall blank area, ceiling pipes must remain IDENTICAL. Do not add a new door or UI or labels or text or arrows. No logos, no watermark. Change only operational indicator lights and natural lighting from right. No green neon.
+
